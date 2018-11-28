@@ -1,4 +1,4 @@
-organization := "br.br.ufc.insightlab"
+organization := "br.ufc.insightlab"
 name := "linked-graphast"
 version := "1.0.0"
 
