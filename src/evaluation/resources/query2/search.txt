@@ -1,0 +1,1 @@
+movie with title[=;Finding Nemo] genre, production start year, budget, gross, imdb rating, that has actor with birth name, has director with birth name, has producer with birth name, has editor with birth name

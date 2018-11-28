@@ -9,6 +9,9 @@ publishConfiguration := publishConfiguration.value.withOverwrite(true)
 resolvers += Resolver.mavenLocal
 
 libraryDependencies += "org.insightlab" % "graphast-core" % "1.0.1"
+libraryDependencies += "br.ufc.insightlab" % "ror" % "1.0.0"
+
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.6"
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
 libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.7.25"

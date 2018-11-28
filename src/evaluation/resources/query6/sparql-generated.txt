@@ -1,0 +1,10 @@
+SELECT  ?Actor ?Movie ?Movie_title ?Movie_imdbrating ?Actor_birthName
+WHERE
+  { FILTER regex(lcase(str(?Actor_birthName)), "^willis, bruce$", "i")
+    ?Actor  a                     <http://dbpedia.org/ontology/Actor> .
+    ?Movie  a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
+    ?Actor  <http://www.movieontology.org/2009/11/09/movieontology.owl#isMaleActorIn>  ?Movie .
+    ?Movie  <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title ;
+            <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating .
+    ?Actor  <http://dbpedia.org/ontology/birthName>  ?Actor_birthName
+  }

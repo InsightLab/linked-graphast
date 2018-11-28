@@ -1,0 +1,1 @@
+company name and movie title with production start year[>=;2006][<=;2010] and company location at Eastern Asia

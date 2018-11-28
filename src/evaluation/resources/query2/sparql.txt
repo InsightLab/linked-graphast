@@ -1,0 +1,19 @@
+PREFIX : <http://www.movieontology.org/2009/11/09/movieontology.owl#>
+PREFIX mo: <http://www.movieontology.org/2009/10/01/movieontology.owl#>
+PREFIX dbpedia: <http://dbpedia.org/ontology/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+select ?x ?genre ?production_year ?budget ?gross ?rating ?actor_name ?director_name ?producer_name ?editor_name
+where {
+  ?x a mo:Movie;
+       mo:title "Finding Nemo"^^xsd:string;
+       mo:belongsToGenre ?genre;
+       dbpedia:productionStartYear ?production_year;
+       dbpedia:budget ?budget;
+       dbpedia:gross ?gross;
+       mo:imdbrating ?rating .
+  ?x mo:hasActor ?actor . ?actor dbpedia:birthName ?actor_name .
+  ?x mo:hasDirector ?director . ?director dbpedia:birthName ?director_name .
+  ?x mo:hasProducer ?producer . ?producer dbpedia:birthName ?producer_name .
+  ?x mo:hasEditor ?editor . ?editor dbpedia:birthName ?editor_name .
+}

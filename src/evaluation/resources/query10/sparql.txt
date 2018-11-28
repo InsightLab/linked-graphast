@@ -1,0 +1,11 @@
+PREFIX : <http://www.movieontology.org/2009/11/09/movieontology.owl#>
+PREFIX mo: <http://www.movieontology.org/2009/10/01/movieontology.owl#>
+PREFIX dbpedia: <http://dbpedia.org/ontology/>
+
+SELECT ?title ?rating
+WHERE {
+        ?movie mo:title ?title .
+        ?movie dbpedia:productionStartYear ?year .
+        ?movie mo:imdbrating ?rating .
+        FILTER (?year > 2012 && ?rating > 9.0)
+}

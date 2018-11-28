@@ -1,0 +1,15 @@
+PREFIX : <http://www.movieontology.org/2009/11/09/movieontology.owl#>
+PREFIX mo: <http://www.movieontology.org/2009/10/01/movieontology.owl#>
+PREFIX page: <http://dbpedia.org/page/>
+PREFIX dbpedia: <http://dbpedia.org/ontology/>
+
+SELECT ?name
+WHERE {
+            ?director a page:Film_Director; dbpedia:birthName "Tarantino, Quentin"; mo:isDirectorOf ?movie1; mo:isDirectorOf ?movie2 .
+            ?movie1 mo:title ?title1 .
+            ?movie1 mo:hasActress ?actress.
+            ?movie2 mo:title ?title2 .
+            ?movie2 mo:hasActress ?actress.
+            ?actress dbpedia:birthName ?name.
+            FILTER (?title1 != ?title2)
+}
