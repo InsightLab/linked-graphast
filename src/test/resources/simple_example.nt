@@ -1,0 +1,36 @@
+<http://insightlab.br.ufc.br/ontology/Person> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://insightlab.br.ufc.br/ontology/Work> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+
+<http://insightlab.br.ufc.br/ontology/Person/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://insightlab.br.ufc.br/ontology/Person> .
+<http://insightlab.br.ufc.br/ontology/Person/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://insightlab.br.ufc.br/ontology/Person> .
+
+<http://insightlab.br.ufc.br/ontology/Work/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://insightlab.br.ufc.br/ontology/Work> .
+<http://insightlab.br.ufc.br/ontology/Work/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://insightlab.br.ufc.br/ontology/Work> .
+
+<http://insightlab.br.ufc.br/ontology/married> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://insightlab.br.ufc.br/ontology/married> <http://www.w3.org/2000/01/rdf-schema#domain> <http://insightlab.br.ufc.br/ontology/Person> .
+<http://insightlab.br.ufc.br/ontology/married> <http://www.w3.org/2000/01/rdf-schema#range> <http://insightlab.br.ufc.br/ontology/Person> .
+
+<http://insightlab.br.ufc.br/ontology/worksAt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://insightlab.br.ufc.br/ontology/worksAt> <http://www.w3.org/2000/01/rdf-schema#range> <http://insightlab.br.ufc.br/ontology/Work> .
+<http://insightlab.br.ufc.br/ontology/worksAt> <http://www.w3.org/2000/01/rdf-schema#domain> <http://insightlab.br.ufc.br/ontology/Person> .
+
+<http://insightlab.br.ufc.br/ontology/name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://insightlab.br.ufc.br/ontology/name> <http://www.w3.org/2000/01/rdf-schema#domain> <http://insightlab.br.ufc.br/ontology/Person> .
+
+<http://insightlab.br.ufc.br/ontology/age> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://insightlab.br.ufc.br/ontology/age> <http://www.w3.org/2000/01/rdf-schema#domain> <http://insightlab.br.ufc.br/ontology/Person> .
+
+<http://insightlab.br.ufc.br/ontology/Person/1> <http://insightlab.br.ufc.br/ontology/name> "Chuck" .
+<http://insightlab.br.ufc.br/ontology/Person/1> <http://insightlab.br.ufc.br/ontology/age> "29" .
+<http://insightlab.br.ufc.br/ontology/Person/1> <http://insightlab.br.ufc.br/ontology/married> <http://insightlab.br.ufc.br/ontology/Person/2> .
+<http://insightlab.br.ufc.br/ontology/Person/1> <http://insightlab.br.ufc.br/ontology/worksAt> <http://insightlab.br.ufc.br/ontology/Work/1> .
+<http://insightlab.br.ufc.br/ontology/Person/1> <http://insightlab.br.ufc.br/ontology/worksAt> <http://insightlab.br.ufc.br/ontology/Work/2> .
+
+<http://insightlab.br.ufc.br/ontology/Person/2> <http://insightlab.br.ufc.br/ontology/name> "Sarah" .
+<http://insightlab.br.ufc.br/ontology/Person/2> <http://insightlab.br.ufc.br/ontology/age> "30" .
+<http://insightlab.br.ufc.br/ontology/Person/2> <http://insightlab.br.ufc.br/ontology/married> <http://insightlab.br.ufc.br/ontology/Person/1> .
+<http://insightlab.br.ufc.br/ontology/Person/2> <http://insightlab.br.ufc.br/ontology/worksAt> <http://insightlab.br.ufc.br/ontology/Work/2> .
+
+<http://insightlab.br.ufc.br/ontology/Work/1> <http://insightlab.br.ufc.br/ontology/name> "BuyMore" .
+<http://insightlab.br.ufc.br/ontology/Work/2> <http://insightlab.br.ufc.br/ontology/name> "CIA" .
