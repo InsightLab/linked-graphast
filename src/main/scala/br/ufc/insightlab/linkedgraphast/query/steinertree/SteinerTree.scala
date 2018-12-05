@@ -2,7 +2,7 @@ package br.ufc.insightlab.linkedgraphast.query.steinertree
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.query.closure.Closure
-import org.insightlab.graphast.model.Node
+import br.ufc.insightlab.graphast.model.Node
 
 object SteinerTree {
 

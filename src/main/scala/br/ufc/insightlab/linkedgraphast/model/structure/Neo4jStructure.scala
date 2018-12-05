@@ -4,10 +4,10 @@ import java.io.File
 import java.util
 
 import org.apache.commons.io.FileUtils
-import org.insightlab.graphast.exceptions.DuplicatedNodeException
-import org.insightlab.graphast.model.{Edge, Node}
-import org.insightlab.graphast.model.components.GraphComponent
-import org.insightlab.graphast.structure.GraphStructure
+import br.ufc.insightlab.graphast.exceptions.DuplicatedNodeException
+import br.ufc.insightlab.graphast.model.{Edge, Node}
+import br.ufc.insightlab.graphast.model.components.GraphComponent
+import br.ufc.insightlab.graphast.structure.GraphStructure
 import br.ufc.insightlab.linkedgraphast.model.helper.LinkedNodeHelper
 import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Link, Relation}
 import br.ufc.insightlab.linkedgraphast.model.node.{Literal, URI}
@@ -452,5 +452,25 @@ class Neo4jStructure(path: String = "linkedgraph.db", reset: Boolean = true) ext
     })
 
     contains
+  }
+
+  override def nodeIndex(nodeId: Long): Long = {
+    throw new Error("Method not implemented yet!")
+  }
+
+  override def edgeIndex(edgeId: Long): Long = {
+    throw new Error("Method not implemented yet!")
+  }
+
+  override def removeNode(n: Node): Node = {
+    throw new Error("Method not implemented yet!")
+  }
+
+  override def isRemoved(n: Node): Boolean = {
+    throw new Error("Method not implemented yet!")
+  }
+
+  override def isRemoved(e: Edge): Boolean = {
+    throw new Error("Method not implemented yet!")
   }
 }
