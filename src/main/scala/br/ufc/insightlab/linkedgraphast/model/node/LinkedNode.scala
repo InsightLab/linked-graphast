@@ -1,6 +1,6 @@
 package br.ufc.insightlab.linkedgraphast.model.node
 
-import org.insightlab.graphast.model.Node
+import br.ufc.insightlab.graphast.model.Node
 import br.ufc.insightlab.linkedgraphast.model.helper.LinkedNodeHelper
 
 /**

@@ -4,7 +4,7 @@ import java.io.File
 import java.sql.{Connection, DriverManager, ResultSet, Statement}
 
 import org.apache.commons.io.FileUtils
-import org.insightlab.graphast.exceptions.NodeNotFoundException
+import br.ufc.insightlab.graphast.exceptions.NodeNotFoundException
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.Map

@@ -1,6 +1,6 @@
 package br.ufc.insightlab.linkedgraphast.modules.keywordmatcher
 
-import org.insightlab.graphast.model.Node
+import br.ufc.insightlab.graphast.model.Node
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.SimilarityMetric
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 

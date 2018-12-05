@@ -1,6 +1,6 @@
 package br.ufc.insightlab.linkedgraphast.query.steinertree
 
-import org.insightlab.graphast.model.Node
+import br.ufc.insightlab.graphast.model.Node
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.query.closure.Neo4jClosure
 

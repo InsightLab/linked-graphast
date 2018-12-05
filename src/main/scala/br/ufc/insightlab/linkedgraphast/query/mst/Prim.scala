@@ -3,7 +3,7 @@ package br.ufc.insightlab.linkedgraphast.query.mst
 import scala.collection.JavaConverters._
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
-import org.insightlab.graphast.model.{Edge, Node}
+import br.ufc.insightlab.graphast.model.{Edge, Node}
 
 import scala.collection.mutable.PriorityQueue
 

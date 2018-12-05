@@ -1,7 +1,7 @@
 package br.ufc.insightlab.linkedgraphast.query.closure
 
-import org.insightlab.graphast.model.{Edge, Node}
-import org.insightlab.graphast.query.shortestpath.DijkstraStrategy
+import br.ufc.insightlab.graphast.model.{Edge, Node}
+import br.ufc.insightlab.graphast.query.shortestpath.DijkstraStrategy
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.query.mst.Prim
 import org.slf4j.{Logger, LoggerFactory}
