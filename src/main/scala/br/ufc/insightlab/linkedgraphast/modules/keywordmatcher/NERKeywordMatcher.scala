@@ -34,6 +34,11 @@ class NERKeywordMatcher(metric: SimilarityMetric, threshold: Double = 0.9) {
 
   }
 
+  private def getFragmentSize(fragment: LinkedGraph): Int =
+    fragment.getLinksAsStream.count(l =>
+      !l.uri.uri.contains("#range") && !l.uri.uri.contains("#domain")
+    )
+
   def apply(graph: LinkedGraph)(text: String): (ListBuffer[Node],Map[Long,List[String]]) = {
 
     val capText = text.split(" ").map(_.capitalize).mkString(" ")
@@ -59,14 +64,15 @@ class NERKeywordMatcher(metric: SimilarityMetric, threshold: Double = 0.9) {
     val fragments = maximalNodes.par
       .map{case (text, (nodes,filters)) =>
         (text, SteinerTree(graph)(nodes.toList), filters)}
-      .toList.sortBy(_._2.getNumberOfEdges)
+      .toList.sortBy(x => getFragmentSize(x._2))
 
     println(s"\n${fragments.size} fragments retreived:\n" +
       s"${fragments.map{case (text, fragment, _) =>
         s"Text: $text\n"+fragment.linksAsString()}.mkString("\n")}")
 
     val minimalFragments = fragments
-      .takeWhile(_._2.getNumberOfEdges == fragments.head._2.getNumberOfEdges)
+      .takeWhile(x =>
+        getFragmentSize(x._2) == getFragmentSize(fragments.head._2))
 
     println(s"\n${minimalFragments.size} minimal fragments retreived:\n" +
       s"${minimalFragments.map{case (text, fragment, _) =>
