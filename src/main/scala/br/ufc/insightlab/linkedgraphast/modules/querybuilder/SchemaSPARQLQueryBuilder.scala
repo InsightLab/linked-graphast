@@ -98,8 +98,8 @@ object SchemaSPARQLQueryBuilder {
       .map(_.asInstanceOf[Link])
       .exists(l => l.uri.uri.endsWith("#type") && l.target.value.endsWith("#Class"))
   }
-
   private def processMultipleElements(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph): String = {
+
 
     var URIfilters = Map[String, List[String]]()
 
@@ -108,7 +108,7 @@ object SchemaSPARQLQueryBuilder {
     val query = QueryFactory.make()
     query.setQuerySelectType()
 
-    val graph = compressSubclasses(g)
+    val graph = compressSubclasses(g, filtersMap)
 
     //    println("Compressed fragment:")
     //    graph.getLinksAsStream.foreach(println)
@@ -366,7 +366,7 @@ object SchemaSPARQLQueryBuilder {
       generateStringFilter(v,filter)
   }
 
-  def compressSubclasses(graph: LinkedGraph): LinkedGraph = {
+  def compressSubclasses(graph: LinkedGraph, filtersMap: Map[Long, List[String]]): LinkedGraph = {
     var superClasses: Set[LinkedNode] = Set()
     var newLinks: List[Link] = Nil
 
@@ -405,7 +405,11 @@ object SchemaSPARQLQueryBuilder {
         }
 
       for (l <- newLinks) graph.addLink(l)
-      for (n <- superClasses) graph.removeNode(n.getId)
+      for {
+        n <- superClasses
+        if !filtersMap.contains(n.getId)
+      } graph.removeNode(n.getId)
+
     } while (newLinks.nonEmpty)
 
     graph

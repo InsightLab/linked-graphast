@@ -30,6 +30,8 @@ libraryDependencies += "org.neo4j" % "neo4j-cypher" % "3.4.7"
 
 libraryDependencies += "com.carrotsearch" % "hppc" % "0.8.1"
 
+libraryDependencies += "edu.washington.cs" % "figer_2.10" % "0"
+
 
 scalaVersion := "2.11.8"
 
