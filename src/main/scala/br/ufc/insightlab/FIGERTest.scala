@@ -31,7 +31,8 @@ object FIGERTest extends App {
 
   val matcher = new NERKeywordMatcher(new PermutedSimilarity(JaroWinkler))
 
-  val s = "tom hanks and bruce willis movies"
+//  val s = "tom hanks and bruce willis movies"
+  val s = "tom hanks"
 
   matcher(graph)(s)
 

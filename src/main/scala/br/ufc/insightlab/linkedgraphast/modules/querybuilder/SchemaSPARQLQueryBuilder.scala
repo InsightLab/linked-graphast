@@ -59,8 +59,25 @@ object SchemaSPARQLQueryBuilder {
           val node = nodes.head
 
           if(isClass(node,schema)){
-            val v = getVar(node.uri, block)
-            query.addResultVar(v)
+            val s = getVar(node.uri, block)
+            query.addResultVar(s)
+
+            for{
+              f <- filtersMap.getOrElse(literal.getId, List())
+            }{
+              query.addResultVar(s)
+              val p = getVar(s.getVarName + "_property")
+
+              val o = getVar(s.getVarName + "_value")
+
+              val pattern = new Triple(s, p, o)
+              block.addTriple(pattern)
+
+              val filterElement = generateFilter(p.getVarName, o, f, schema)
+              if (filterElement.isDefined)
+                body.addElement(filterElement.get)
+            }
+
           }
           else if(isDataTypeProperty(node.value,schema)){
             val s = getVar("xpto")
