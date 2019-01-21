@@ -192,6 +192,8 @@ object SchemaSPARQLQueryBuilder {
         if (filterElement.isDefined)
           body.addElement(filterElement.get)
       }
+
+      URIfilters -= property
     }
 
 
@@ -212,6 +214,25 @@ object SchemaSPARQLQueryBuilder {
 
       val pattern = new Triple(s, p, o)
       block.addTriple(pattern)
+    }
+
+    for{
+      (uri, filters) <- URIfilters
+      s = getVar(uri)
+      f <- filters
+    }{
+      println(s"$uri -> $f")
+      query.addResultVar(s)
+      val p = getVar(s.getVarName + "_property")
+
+      val o = getVar(s.getVarName + "_value")
+
+      val pattern = new Triple(s, p, o)
+      block.addTriple(pattern)
+
+      val filterElement = generateFilter(p.getVarName, o, f, schema)
+      if (filterElement.isDefined)
+        body.addElement(filterElement.get)
     }
 
     body.addElement(block)

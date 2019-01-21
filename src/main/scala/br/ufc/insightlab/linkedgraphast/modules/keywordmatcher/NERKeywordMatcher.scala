@@ -78,7 +78,7 @@ class NERKeywordMatcher(metric: SimilarityMetric, threshold: Double = 0.9) {
       s"${minimalFragments.map{case (text, fragment, _) =>
         s"Text: $text\n"+fragment.linksAsString()}.mkString("\n")}")
 
-    println(s"Queries generated:\n"+
+    println(s"\nQueries generated:\n"+
       s"${minimalFragments.map{case (text, fragment, filters) =>
         s"Text: $text\n${SchemaSPARQLQueryBuilder(fragment, filters, graph)}"
       }}")
