@@ -5,7 +5,7 @@ import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.modules.figer.Figer
 import br.ufc.insightlab.linkedgraphast.modules.fragmentextractor.FragmentExtractor
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.SimilarityMetric
-import br.ufc.insightlab.linkedgraphast.modules.querybuilder.SchemaSPARQLQueryBuilder
+import br.ufc.insightlab.linkedgraphast.modules.querybuilder.{MultipleSchemaSPARQLQueryBuilder, SchemaSPARQLQueryBuilder}
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 
 import scala.collection.mutable.ListBuffer
@@ -80,8 +80,11 @@ class NERKeywordMatcher(metric: SimilarityMetric, threshold: Double = 0.9) {
 
     println(s"\nQueries generated:\n"+
       s"${minimalFragments.map{case (text, fragment, filters) =>
-        s"Text: $text\n${SchemaSPARQLQueryBuilder(fragment, filters, graph)}"
+        s"Text: $text\n${SchemaSPARQLQueryBuilder(fragment, filters, graph)}\n\n"
       }}")
+
+    println("Combined query:\n"+
+      MultipleSchemaSPARQLQueryBuilder(minimalFragments.map(x => (x._2,x._3)), graph))
 
     (ListBuffer(), Map())
   }
