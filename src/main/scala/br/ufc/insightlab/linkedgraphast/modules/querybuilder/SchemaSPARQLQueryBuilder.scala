@@ -1,13 +1,14 @@
 package br.ufc.insightlab.linkedgraphast.modules.querybuilder
 
 import org.apache.jena.graph.Triple
-import org.apache.jena.query.QueryFactory
+import org.apache.jena.query.{Query, QueryFactory}
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.sparql.core.Var
 import org.apache.jena.sparql.expr._
 import org.apache.jena.sparql.expr.nodevalue.NodeValueString
-import org.apache.jena.sparql.syntax.{ElementFilter, ElementGroup, ElementTriplesBlock}
+import org.apache.jena.sparql.syntax.{ElementFilter, ElementGroup, ElementOptional, ElementTriplesBlock}
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
+import br.ufc.insightlab.linkedgraphast.model.helper.LinkedNodeHelper
 import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Link, Relation}
 import br.ufc.insightlab.linkedgraphast.model.node.{LinkedNode, Literal, URI}
 import org.slf4j.LoggerFactory
@@ -42,18 +43,17 @@ object SchemaSPARQLQueryBuilder {
   private def cleanURI(uri: String): String =
     uri.reverse.takeWhile(c => c != '/' && c != '#').reverse.replace(">", "").replace(".", "")
 
-  private def processSingleElement(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph): String = {
+  private[querybuilder] def processSingleElement(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph, query: Query): ElementGroup = {
     val block = new ElementTriplesBlock()
     val body = new ElementGroup()
-    val query = QueryFactory.make()
-    query.setQuerySelectType()
 
     g.getNodes.iterator.next match {
     case literal: Literal =>
       val nodes = schema.getInEdges(literal.getId).asScala
         .map(_.asInstanceOf[Link])
         .filter(l => l.uri.uri.endsWith("#label") && l.target==literal)
-        .map(_.source)
+        .map(_.source).toStream
+        .filter(isClass(_,schema))
 
         if(nodes.nonEmpty){
           val node = nodes.head
@@ -62,21 +62,36 @@ object SchemaSPARQLQueryBuilder {
             val s = getVar(node.uri, block)
             query.addResultVar(s)
 
-            for{
-              f <- filtersMap.getOrElse(literal.getId, List())
-            }{
+            if(filtersMap.getOrElse(literal.getId, List()).nonEmpty){
               query.addResultVar(s)
-              val p = getVar(s.getVarName + "_property")
 
               val o = getVar(s.getVarName + "_value")
+              query.addResultVar(o)
+
+              val p = getVar(s.getVarName + "_property")
+              query.addResultVar(p)
 
               val pattern = new Triple(s, p, o)
               block.addTriple(pattern)
 
-              val filterElement = generateFilter(p.getVarName, o, f, schema)
-              if (filterElement.isDefined)
-                body.addElement(filterElement.get)
+              //      for(property <- getDataTypeProperties(uri,schema)){
+              //        val p = model.createProperty(property).asNode
+              //
+              //        val pattern = new Triple(s, p, o)
+              //        val optBlock = new ElementTriplesBlock()
+              //        optBlock.addTriple(pattern)
+              //        body.addElement(new ElementOptional(optBlock))
+              //      }
+
+              for{
+                f <- filtersMap.getOrElse(literal.getId, List())
+              }{
+                val filterElement = generateStringFilter(o, f)
+                if (filterElement.isDefined)
+                  body.addElement(filterElement.get)
+              }
             }
+
 
           }
           else if(isDataTypeProperty(node.value,schema)){
@@ -104,26 +119,26 @@ object SchemaSPARQLQueryBuilder {
     }
 
     body.addElement(block)
-    query.setQueryPattern(body)
+//    query.setQueryPattern(body)
+//
+//    query.toString
 
-    query.toString
+    body
   }
 
-  private def isClass(node: LinkedNode, schema: LinkedGraph): Boolean = {
+  private[querybuilder] def isClass(node: LinkedNode, schema: LinkedGraph): Boolean = {
     schema.getInEdges(node.getId)
       .asScala
       .map(_.asInstanceOf[Link])
       .exists(l => l.uri.uri.endsWith("#type") && l.target.value.endsWith("#Class"))
   }
-  private def processMultipleElements(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph): String = {
+  private[querybuilder] def processMultipleElements(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph, query: Query): ElementGroup = {
 
 
     var URIfilters = Map[String, List[String]]()
 
     val block = new ElementTriplesBlock()
     val body = new ElementGroup()
-    val query = QueryFactory.make()
-    query.setQuerySelectType()
 
     val graph = compressSubclasses(g, filtersMap)
 
@@ -235,45 +250,82 @@ object SchemaSPARQLQueryBuilder {
 
     for{
       (uri, filters) <- URIfilters
-      s = getVar(uri)
-      f <- filters
-    }{
-      println(s"$uri -> $f")
+      if isClass(schema.getNodeByURI(uri).asInstanceOf[LinkedNode], schema)
+    } {
+      val s = getVar(uri)
       query.addResultVar(s)
-      val p = getVar(s.getVarName + "_property")
 
       val o = getVar(s.getVarName + "_value")
+      query.addResultVar(o)
+
+      val p = getVar(s.getVarName + "_property")
+      query.addResultVar(p)
 
       val pattern = new Triple(s, p, o)
       block.addTriple(pattern)
 
-      val filterElement = generateFilter(p.getVarName, o, f, schema)
-      if (filterElement.isDefined)
-        body.addElement(filterElement.get)
+//      for(property <- getDataTypeProperties(uri,schema)){
+//        val p = model.createProperty(property).asNode
+//
+//        val pattern = new Triple(s, p, o)
+//        val optBlock = new ElementTriplesBlock()
+//        optBlock.addTriple(pattern)
+//        body.addElement(new ElementOptional(optBlock))
+//      }
+
+      for (f <- filters) {
+        val filterElement = generateStringFilter(o, f)
+        if (filterElement.isDefined)
+          body.addElement(filterElement.get)
+      }
     }
 
     body.addElement(block)
-    query.setQueryPattern(body)
+//    query.setQueryPattern(body)
+//
+//    query.toString
 
-    query.toString
+    body
   }
 
   def apply(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph): String = {
 
     URIToVar = Map.empty
+    val query = QueryFactory.make()
+    query.setQuerySelectType()
 
-    if(g.getNumberOfNodes == 1){
-      processSingleElement(g, filtersMap, schema)
+    val body = if(g.getNumberOfNodes == 1){
+      processSingleElement(g, filtersMap, schema, query)
     }
     else{
-      processMultipleElements(g, filtersMap, schema)
+      processMultipleElements(g, filtersMap, schema, query)
     }
 
+    query.setQueryPattern(body)
+    query.toString
+  }
+
+  private[querybuilder] def getDataTypeProperties(uri: String, schema: LinkedGraph): Seq[String] = {
+    schema.getInEdges(LinkedNodeHelper.getNodeIdByURI(uri))
+      .asScala
+      .flatMap{
+        case l: Link =>
+          if(l.uri.uri.contains("#domain") && l.target.value == uri)
+          List[String](l.source.uri)
+          else if(l.uri.uri.contains("subClassOf") && l.source.uri == uri) {
+//            println(s"$uri is subclass of ${l.target.value}")
+            getDataTypeProperties(l.target.value, schema)
+          }
+          else Nil
+        case _ => Nil
+      }
+      .filter(isDataTypeProperty(_,schema))
+      .toList
 
   }
 
 
-  private def generateStringFilter(v: Var, filter: String): Option[ElementFilter] = {
+  private[querybuilder] def generateStringFilter[querybuilder](v: Var, filter: String): Option[ElementFilter] = {
     val cleanFilter = filter
       .replace("[", "")
       .replace("]", "")
@@ -332,7 +384,7 @@ object SchemaSPARQLQueryBuilder {
     }
   }
 
-  private def generateNumberFilter(v: Var, filter: String, typeURI: String): Option[ElementFilter] = {
+  private[querybuilder] def generateNumberFilter[querybuilder](v: Var, filter: String, typeURI: String): Option[ElementFilter] = {
     val cleanFilter = filter
       .replace("[", "")
       .replace("]", "")
@@ -396,7 +448,7 @@ object SchemaSPARQLQueryBuilder {
       }
   }
 
-  private def generateFilter(uri: String, v: Var, filter: String, schema: LinkedGraph): Option[ElementFilter] = {
+  private[querybuilder] def generateFilter(uri: String, v: Var, filter: String, schema: LinkedGraph): Option[ElementFilter] = {
     val ranges = getRanges(uri, schema)
     if(ranges.exists(r => r.contains("#int") || r.endsWith("#decimal") || r.endsWith("#double")))
       generateNumberFilter(v,filter, ranges.head)
@@ -453,16 +505,16 @@ object SchemaSPARQLQueryBuilder {
     graph
   }
 
-  private def isDataTypeProperty(uri: String, schema: LinkedGraph): Boolean = {
+  private[querybuilder] def isDataTypeProperty(uri: String, schema: LinkedGraph): Boolean = {
     val node = schema.getNodeByURI(uri)
 
     !schema.getInEdges(node.getId).asScala
       .map(_.asInstanceOf[Link])
       .exists(l =>
-        l.uri.uri.endsWith("#range") && !l.target.value.contains("XMLSchema#") && !l.target.value.endsWith("#PlainLiteral"))
+        l.uri.uri.endsWith("#range") && !l.target.value.contains("XMLSchema#") && !l.target.value.endsWith("#PlainLiteral") && !l.target.value.endsWith("#langString"))
   }
 
-  private def getRanges(uri: String, schema: LinkedGraph): List[String] =
+  private[querybuilder] def getRanges(uri: String, schema: LinkedGraph): List[String] =
     schema.getInEdges(schema.getNodeByURI(uri).getId)
       .asScala
       .map(_.asInstanceOf[Link])

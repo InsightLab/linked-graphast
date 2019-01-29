@@ -25,9 +25,10 @@ class NERKeywordMatcher(metric: SimilarityMetric, threshold: Double = 0.9) {
     if(entities.isEmpty) List(text)
     else{
       val (entity,tags) = entities.head
+      val entityFilters = entity.split(" ").map(x => s"[contains;$x]").mkString("")
       tags.flatMap(t =>
         generateCombinations(
-          text.replace(entity, s"$t[=;$entity]"),
+          text.replace(entity, t+entityFilters),
           entities.tail)
       )
     }
@@ -83,7 +84,7 @@ class NERKeywordMatcher(metric: SimilarityMetric, threshold: Double = 0.9) {
         s"Text: $text\n${SchemaSPARQLQueryBuilder(fragment, filters, graph)}\n\n"
       }}")
 
-    println("Combined query:\n"+
+    println("\nCombined query:\n"+
       MultipleSchemaSPARQLQueryBuilder(minimalFragments.map(x => (x._2,x._3)), graph))
 
     (ListBuffer(), Map())

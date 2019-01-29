@@ -27,12 +27,13 @@ object FIGERTest extends App {
 //    println("\n-------------------\n")
 //  }
 
-  val graph = NTripleParser.parse("src/main/resources/imdb-schema.nt")
+  val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
+//  val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
 
   val matcher = new NERKeywordMatcher(new PermutedSimilarity(JaroWinkler))
 
 //  val s = "tom hanks and bruce willis movies"
-  val s = "tom hanks"
+  val s = "John Smith' books"
 
   matcher(graph)(s)
 
