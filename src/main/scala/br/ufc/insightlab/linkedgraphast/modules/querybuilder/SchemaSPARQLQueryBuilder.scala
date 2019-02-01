@@ -149,7 +149,7 @@ object SchemaSPARQLQueryBuilder {
     var rangesMap = Map[String, String]()
 
     graph
-      .getLinksAsStream
+      .getLinksAsStream.toList
       .filterNot(l => {
         if (l.isInstanceOf[Attribute]) {
           if (filtersMap.contains(l.target.getId)) {
@@ -162,7 +162,7 @@ object SchemaSPARQLQueryBuilder {
       })
       //      .foreach(println)
       .foreach(l => {
-      //        println(l)
+//        println(l)
       if (l.uri.uri.contains("#domain")) {
         if (rangesMap.contains(l.source.uri)) {
           val s = getVar(l.target.value, block)
@@ -208,7 +208,7 @@ object SchemaSPARQLQueryBuilder {
       if isDataTypeProperty(property, schema)
       subject <- subjects
     } {
-      val s = getVar(subject)
+      val s = getVar(subject, block)
       query.addResultVar(s)
 
       val p = model.createProperty(property).asNode
@@ -236,7 +236,7 @@ object SchemaSPARQLQueryBuilder {
       range <- getRanges(property, schema)
       if hasVar(range)
     } {
-      val s = getVar(subject)
+      val s = getVar(subject, block)
       query.addResultVar(s)
 
       val p = model.createProperty(property).asNode

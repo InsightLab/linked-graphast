@@ -12,11 +12,14 @@ import scala.collection.JavaConverters._
 object Figer {
 
   private var initialized: Boolean = false
+  var configFile: String = _
   private var sys: FigerSystem = _
 
-  def init(): Unit = {
-    if(!initialized) {
-      FigerSystem.configFile = "src/main/resources/figer.conf"
+  def init(file: String = configFile): Unit = {
+    if(!initialized || file != configFile) {
+      if(null == file) throw new Error("A configuration file must be informed to FIGER!")
+      FigerSystem.configFile = file
+      configFile = file
       sys = FigerSystem.instance()
       Preprocessing.initPipeline()
       initialized = true

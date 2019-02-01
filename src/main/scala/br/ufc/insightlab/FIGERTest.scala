@@ -1,8 +1,8 @@
 package br.ufc.insightlab
 
 import br.ufc.insightlab.linkedgraphast.modules.figer.Figer
-import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.NERKeywordMatcher
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.{JaroWinkler, PermutedSimilarity}
+import br.ufc.insightlab.linkedgraphast.modules.querybuilder.NERQueryBuilder
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import edu.stanford.nlp.ling.CoreAnnotations.{SentencesAnnotation, TokensAnnotation}
 import edu.stanford.nlp.ling.{CoreAnnotations, CoreLabel}
@@ -27,13 +27,12 @@ object FIGERTest extends App {
 //    println("\n-------------------\n")
 //  }
 
-  val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
+  val graph = NTripleParser.parse("src/main/resources/imdb-schema-clean.nt")
 //  val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
 
-  val matcher = new NERKeywordMatcher(new PermutedSimilarity(JaroWinkler))
+  val matcher = new NERQueryBuilder(new PermutedSimilarity(JaroWinkler))
 
-//  val s = "tom hanks and bruce willis movies"
-  val s = "John Smith' books"
+  val s = "which are the movies with tom hanks"
 
   matcher(graph)(s)
 
