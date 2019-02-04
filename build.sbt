@@ -1,6 +1,6 @@
 organization := "br.ufc.insightlab"
 name := "linked-graphast"
-version := "1.0.0"
+version := "1.1.0"
 
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 publishConfiguration := publishConfiguration.value.withOverwrite(true)
@@ -35,5 +35,4 @@ libraryDependencies += "edu.washington.cs" % "figer_2.10" % "0"
 
 scalaVersion := "2.11.8"
 
-assemblyJarName in assembly := "linked-graphast.jar"
-
+mappings in (Compile, packageBin) ~= { _.filter(!_._1.getName.endsWith(".model.gz")) }
