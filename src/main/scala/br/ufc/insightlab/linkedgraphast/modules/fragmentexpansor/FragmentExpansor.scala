@@ -1,25 +1,26 @@
 package br.ufc.insightlab.linkedgraphast.modules.fragmentexpansor
 
-import java.nio.charset.Charset
-
-import br.ufc.insightlab.graphast.model.Node
+import br.ufc.insightlab.graphast.model.{Edge, Node}
 
 import scala.collection.JavaConverters._
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Link, Relation}
-import br.ufc.insightlab.linkedgraphast.model.node.{Literal, URI}
-import com.github.jsonldjava.shaded.com.google.common.base.CharMatcher
+import br.ufc.insightlab.linkedgraphast.model.node.{Literal}
 
 object FragmentExpansor {
 
   private def getSuperclasses(node: Node, schema: LinkedGraph): List[Node] = {
+
     schema.getInEdges(node.getId)
       .asScala
       .filter{
         case r: Relation =>
-          if(r.uri.uri.contains("#subClassOf") && r.source == node) true
-          else false
-        case _ => false
+          if(r.uri.uri.contains("#subClassOf") && r.source == node)
+            true
+          else
+            false
+        case e: Edge =>
+          false
       }
       .flatMap{
         case r: Relation => r.target :: getSuperclasses(r.target, schema)
@@ -39,13 +40,14 @@ object FragmentExpansor {
       graph.getInEdges(firstNode.getId).asScala
         .map(_.asInstanceOf[Link])
         .filter(l => l.uri.uri.endsWith("#label") && l.target==firstNode)
-        .foreach(l => {fragment.addNode(l.source)})
+        .foreach(l => {
+          fragment.addNode(l.source)})
     else fragment = f
 
-    f.getNodes
+    fragment.getNodes
       .asScala
       .flatMap(getSuperclasses(_,graph))
-      .foreach(f.addNode)
+      .foreach(fragment.addNode)
 
     val nodes = graph.getLinksAsStream
       .filter(l => {

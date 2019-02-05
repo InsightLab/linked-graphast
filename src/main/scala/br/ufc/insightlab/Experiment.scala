@@ -6,7 +6,7 @@ import br.ufc.insightlab.linkedgraphast.modules.fragmentextractor.FragmentExtrac
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.{SimilarityKeywordMatcherOptimized, SimilarityKeywordMatcherOptimizedWithFilters}
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.{JaroWinkler, PermutedSimilarity}
 import br.ufc.insightlab.linkedgraphast.modules.querybuilder.SchemaSPARQLQueryBuilder
-import br.ufc.insightlab.linkedgraphast.modules.vonqbe.VonQBESparqlBuilder
+import br.ufc.insightlab.linkedgraphast.modules.vonqbe.{VonQBEFragmentExtractor, VonQBESparqlBuilder}
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 
@@ -20,21 +20,7 @@ object Experiment extends App {
 //      .map(_.source.uri).distinct.mkString("\n"))
 
   val searches = List(
-//    "tv series and their titles"
-//    ,"title of movies and their actors birth name"
-//    ,"company name of movies and their titles"
-//    ,"title of movies on America and their budget"
-//    ,"title and company name of movies from eastern asia"
-//    ,
-
-//    "actor birth name movie title[contains;die hard]"
-//    ,"title of movies with actor birth name[=;hanks, tom]"
-//    ,"title of movies from company name[=;Nintendo]"
-//    ,"title of movies with production start year[>=;2000][<=;2010]"
-//    ,"title and budget of movies with actor with birth name[=;willis, bruce] and production start year[>;2000]"
-//    ,
-    "tom hanks movies"
-//    "actor[contains;Tom][contains;Hanks] Movies"
+  "actor"
   )
 
 //  val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(s)
@@ -49,11 +35,16 @@ object Experiment extends App {
 //  val query1 = SchemaSPARQLQueryBuilder(fragment,filters,graph)
 //
 //  println("\n"+query1)
-  val useNer = true
+  val useNer = false
   if(useNer)
     Figer.init("src/main/resources/figer.conf")
 
   for(s <- searches){
+
+    val fragment = new VonQBEFragmentExtractor(graph).generateFragment(s)
+    val suggestions = FragmentExpansor(graph)(fragment)
+    println(s"Suggestions to $s:\n${suggestions.mkString(",")}\n")
+
     val query2 = new VonQBESparqlBuilder(graph, useNer).generateSPARQL(s, useNer)
 
     println(s"SPARQL generated to search '$s' : \n\n$query2\n\n")
