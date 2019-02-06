@@ -40,7 +40,7 @@ object SchemaSPARQLQueryBuilder {
   private def hasVar(URI: String): Boolean =
     URIToVar.contains(cleanURI(URI))
 
-  private def cleanURI(uri: String): String =
+  def cleanURI(uri: String): String =
     uri.reverse.takeWhile(c => c != '/' && c != '#').reverse.replace(">", "").replace(".", "")
 
   private[querybuilder] def processSingleElement(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph, query: Query): ElementGroup = {
