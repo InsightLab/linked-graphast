@@ -1,1 +1,1 @@
-title and imdb rating of movie with production start year[>;2012] and imdb rating[>;9]
+find the genre of tv series with title[contains;24]

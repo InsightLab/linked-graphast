@@ -1,0 +1,1 @@
+find writer with birth name[contains;Barker, Clive]

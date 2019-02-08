@@ -26,9 +26,9 @@ object IMDBEvaluation {
     "src/evaluation/resources/mapping.obda")
 
   def processQueries(original: String, generated: String, i:  Int): Unit = {
-    logger.info("Exporting benchmark results")
+    logger.debug("Exporting benchmark results")
     exportQueryResultsTSV(ror.runQuery(original),s"src/evaluation/resources/query$i/benchmark-results.tsv")
-    logger.info("Exporting generated results")
+    logger.debug("Exporting generated results")
     exportQueryResultsTSV(ror.runQuery(generated),s"src/evaluation/resources/query$i/generated-results.tsv")
   }
 
@@ -36,7 +36,6 @@ object IMDBEvaluation {
     val writer = new PrintWriter(new File(filePath))
     val it = result.iterator
     val result0 = if (it.hasNext) it.next() else new ResultQuery(0)
-    println(result0)
     val header = result0.getProjections.asScala.toList
 
     writer.println(header.mkString("\t"))
@@ -49,12 +48,12 @@ object IMDBEvaluation {
       i += 1
     }
 
-    logger.info(s"$i tuples written")
+    logger.debug(s"$i tuples written")
 
     writer.close()
   }
 
-  val graph: LinkedGraph = NTripleParser.parse("src/evaluation/resources/MovieOntology.nt")
+  val graph: LinkedGraph = NTripleParser.parse("src/main/resources/imdb-schema.nt")
 
   def generateQuery(search: String, filePath: String): String = {
     val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(search)
@@ -68,12 +67,9 @@ object IMDBEvaluation {
   }
 
   def recallExperiment(generate: Boolean = true, processSPARQL: Boolean = true): Unit = {
-    for{
-      i <- 1 to 1
-      if i != 5
-      if i != 7
-      if i != 9
-    } {
+    val recalls = for{
+      i <- 1 to 37
+    } yield {
       val path = s"src/evaluation/resources/query$i/"
       val sparqlPath = path + "sparql.txt"
       val searchPath = path + "search.txt"
@@ -90,12 +86,15 @@ object IMDBEvaluation {
       if(processSPARQL)
         processQueries(sparql,query,i)
 
-      logger.info(s"Recall value: "+
-        Recall(s"src/evaluation/resources/query$i/benchmark-results.tsv",
-          s"src/evaluation/resources/query$i/generated-results.tsv")
-      )
+      val recall = Recall(s"src/evaluation/resources/query$i/benchmark-results.tsv",
+        s"src/evaluation/resources/query$i/generated-results.tsv")
 
+      logger.info(s"Recall value: $recall")
+
+      recall
     }
+
+    logger.info(s"Mean recall: ${recalls.sum/recalls.size}")
   }
 
   def matcherExperiment(): Unit = {
@@ -152,7 +151,7 @@ object IMDBEvaluation {
   def main(args: Array[String]): Unit = {
 
     recallExperiment(true,true)
-    matcherExperiment()
+//    matcherExperiment()
 
   }
 

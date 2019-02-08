@@ -10,9 +10,12 @@ resolvers += Resolver.mavenLocal
 
 libraryDependencies += "br.ufc.insightlab" % "graphast-core" % "1.1.0"
 libraryDependencies += "br.ufc.insightlab" % "ror" % "1.0.0"
+
 libraryDependencies += "org.wildfly.swarm" % "teiid-jdbc" % "2018.5.0"
 libraryDependencies += "org.teiid" % "teiid-client" % "10.2.0"
 libraryDependencies += "org.teiid" % "teiid-common-core" % "10.2.0"
+libraryDependencies += "org.teiid" % "teiid-api" % "10.2.0"
+
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.6"
 

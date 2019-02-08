@@ -481,6 +481,7 @@
     <owl:DatatypeProperty rdf:about="&dbpedia;budget">
         <rdfs:label xml:lang="en">budget</rdfs:label>
         <rdfs:domain rdf:resource="&mo;Movie"/>
+        <rdfs:domain rdf:resource="&mo;TVSeries"/>
     </owl:DatatypeProperty>
 
 
@@ -538,7 +539,7 @@
     <owl:DatatypeProperty rdf:about="&mo;title">
         <rdfs:domain rdf:resource="&mo;Movie"/>
         <rdfs:domain rdf:resource="&mo;TVSeries"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+
         <rdfs:label xml:lang="en">title</rdfs:label>
     </owl:DatatypeProperty>
 

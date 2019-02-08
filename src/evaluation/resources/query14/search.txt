@@ -1,0 +1,1 @@
+find the gross of TV Series with title[contains;24]

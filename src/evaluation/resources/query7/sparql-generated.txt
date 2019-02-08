@@ -1,0 +1,7 @@
+SELECT  ?Film_Director ?Film_Director_birthName
+WHERE
+  { FILTER contains(lcase(str(?Film_Director_birthName)), "tarantino, quentin")
+    ?Film_Director
+              a                     <http://dbpedia.org/page/Film_Director> ;
+              <http://dbpedia.org/ontology/birthName>  ?Film_Director_birthName
+  }

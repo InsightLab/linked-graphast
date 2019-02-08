@@ -1,1 +1,1 @@
-title and imdb rating of movie from a production company located at Europe
+find editor with birth name[contains;Rawlings, Terry]

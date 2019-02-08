@@ -1,13 +1,6 @@
-SELECT  ?Production_Company ?Movie ?Europe ?Movie_title ?Movie_imdbrating
+SELECT  ?Editor ?Editor_birthName
 WHERE
-  { ?Production_Company
-              a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Production_Company> .
-    ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
-    ?Production_Company
-              <http://www.movieontology.org/2009/10/01/movieontology.owl#produced>  ?Movie .
-    ?Europe   a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Europe> .
-    ?Production_Company
-              <http://www.movieontology.org/2009/11/09/movieontology.owl#hasCompanyLocation>  ?Europe .
-    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title ;
-              <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating
+  { FILTER contains(lcase(str(?Editor_birthName)), "rawlings, terry")
+    ?Editor  a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Editor> ;
+             <http://dbpedia.org/ontology/birthName>  ?Editor_birthName
   }

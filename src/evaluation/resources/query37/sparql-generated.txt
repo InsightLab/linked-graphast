@@ -1,0 +1,8 @@
+SELECT  ?Movie ?Movie_title ?Movie_productionStartYear ?Movie_imdbrating
+WHERE
+  { FILTER ( ?Movie_productionStartYear > "2012"^^<http://www.w3.org/2001/XMLSchema#int> )
+    FILTER ( ?Movie_imdbrating > "9"^^<http://www.w3.org/2001/XMLSchema#decimal> )
+    ?Movie  <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title ;
+            <http://dbpedia.org/ontology/productionStartYear>  ?Movie_productionStartYear ;
+            <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating
+  }

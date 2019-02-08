@@ -1,0 +1,7 @@
+SELECT  ?TVSeries ?TVSeries_budget ?TVSeries_title
+WHERE
+  { FILTER contains(lcase(str(?TVSeries_title)), "24")
+    ?TVSeries  a                    <http://www.movieontology.org/2009/10/01/movieontology.owl#TVSeries> ;
+              <http://dbpedia.org/ontology/budget>  ?TVSeries_budget ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?TVSeries_title
+  }

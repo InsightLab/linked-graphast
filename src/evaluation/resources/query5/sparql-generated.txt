@@ -1,0 +1,6 @@
+SELECT  ?Writer ?Writer_birthName
+WHERE
+  { FILTER contains(lcase(str(?Writer_birthName)), "barker, clive")
+    ?Writer  a                     <http://dbpedia.org/ontology/Writer> ;
+             <http://dbpedia.org/ontology/birthName>  ?Writer_birthName
+  }

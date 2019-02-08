@@ -1,1 +1,1 @@
-movie title, imdb rating[>;8.0], production start year[>=;2010]
+find TV Series with title[contains;24]

@@ -1,9 +1,14 @@
 package br.ufc.insightlab.linkedgraphast.metrics
 
+import org.slf4j.LoggerFactory
+
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.io.Source
 
 object Recall extends EvaluationMetric {
+
+  private val logger = LoggerFactory.getLogger(this.getClass)
+
   override def apply(originalDataPath: String, generatedDataPath: String, skipRow: Int, delimiter: String): Double = {
     val generatedDataLines = Source.fromFile(generatedDataPath).getLines()
     generatedDataLines.next()
@@ -36,7 +41,8 @@ object Recall extends EvaluationMetric {
         i+=1
       }
     }
-    println(s"Found: $foundData | Total: $totalData")
-    foundData/totalData
+    logger.debug(s"Found: $foundData | Total: $totalData")
+    if(foundData == totalData) 1.0
+    else foundData/totalData
   }
 }

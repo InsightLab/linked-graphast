@@ -1,0 +1,1 @@
+find the genre of the movie with title[contains;Finding Nemo]

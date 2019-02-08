@@ -1,0 +1,7 @@
+PREFIX : <http://www.movieontology.org/2009/11/09/movieontology.owl#>
+PREFIX mo: <http://www.movieontology.org/2009/10/01/movieontology.owl#>
+select ?x ?company_name ?country_code
+where {
+  ?x :hasCompanyLocation ?y; :companyName ?company_name ; :countryCode ?country_code .
+ ?y a mo:Western_Europe .
+}

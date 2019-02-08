@@ -1,8 +1,6 @@
-SELECT  ?Movie ?Movie_productionStartYear ?Movie_imdbrating ?Movie_title
+SELECT  ?TVSeries ?TVSeries_title
 WHERE
-  { FILTER ( ?Movie_productionStartYear >= "2010"^^<http://www.w3.org/2001/XMLSchema#int> )
-    FILTER ( ?Movie_imdbrating > "8"^^<http://www.w3.org/2001/XMLSchema#decimal> )
-    ?Movie  <http://dbpedia.org/ontology/productionStartYear>  ?Movie_productionStartYear ;
-            <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating ;
-            <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title
+  { FILTER contains(lcase(str(?TVSeries_title)), "24")
+    ?TVSeries  a                    <http://www.movieontology.org/2009/10/01/movieontology.owl#TVSeries> ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?TVSeries_title
   }

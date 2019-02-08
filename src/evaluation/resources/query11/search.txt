@@ -1,0 +1,1 @@
+find the budget of movie with title[contains;Finding Nemo]

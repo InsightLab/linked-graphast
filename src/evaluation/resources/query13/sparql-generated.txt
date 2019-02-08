@@ -1,0 +1,7 @@
+SELECT  ?Movie ?Movie_gross ?Movie_title
+WHERE
+  { FILTER contains(lcase(str(?Movie_title)), "finding nemo")
+    ?Movie  a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> ;
+            <http://dbpedia.org/ontology/gross>  ?Movie_gross ;
+            <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title
+  }

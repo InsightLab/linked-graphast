@@ -1,0 +1,1 @@
+find the title, imdb rating[>;7], production started year[>=;2000][<=;2010] and actor birth name of movie where the actor is also film director
