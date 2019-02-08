@@ -23,17 +23,17 @@ object Closure {
     if (nodes.size == 1) graph
     else {
       g.getLinksAsStream
-        .filter(_ match {
+        .foreach(link => link match {
           case Relation(_, l, t) =>
-            (l.uri.endsWith("#type") && (t.uri.endsWith("#Class") || t.uri.endsWith("Property"))) ||
-              (l.uri.endsWith("#range") && t.uri.contains("XMLSchema#") ||
-                l.uri.contains("rdf-schema#sub"))
-          case _ => false
+            if ((l.uri.endsWith("#type") && (t.uri.endsWith("#Class") || t.uri.endsWith("Property"))) ||
+              (l.uri.endsWith("#range") && t.uri.contains("XMLSchema#")))
+              link.setWeight(100)
+            else if(l.uri.contains("rdf-schema#sub"))
+              link.setWeight(10)
+
+          case _ =>
         })
-        .foreach(e => {
-          e.setWeight(100)
-          //          println(e)
-        })
+
 
       val pairNodes = nodes
         .combinations(2)
@@ -71,6 +71,7 @@ object Closure {
 
         for (trg <- path.tail) {
           val edge = g.getEdge(src, trg)
+//          println(edge)
 
           if(edge.getWeight >= 1) {
             modifiedEdges :+= (edge, edge.getWeight)
