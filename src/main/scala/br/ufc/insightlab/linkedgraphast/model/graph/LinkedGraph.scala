@@ -227,4 +227,7 @@ class LinkedGraph(structure: GraphStructure = new DefaultGraphStructure()) exten
     null != e1 || null != e2
   }
 
+  def linksAsString(sep: String = "\n"): String =
+    getLinksAsStream.map(_.toString).mkString(sep)
+
 }

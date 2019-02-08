@@ -36,6 +36,7 @@ class SimilarityKeywordMatcherOptimized (metric: SimilarityMetric, threshold: Do
     }
 
 
+
     var i = 0
     while(i < mostSimilars.size){
       //take the candidates from the last to the first, getting the larger match

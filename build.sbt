@@ -1,6 +1,6 @@
 organization := "br.ufc.insightlab"
 name := "linked-graphast"
-version := "1.0.0"
+version := "1.1.0"
 
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 publishConfiguration := publishConfiguration.value.withOverwrite(true)
@@ -30,8 +30,9 @@ libraryDependencies += "org.neo4j" % "neo4j-cypher" % "3.4.7"
 
 libraryDependencies += "com.carrotsearch" % "hppc" % "0.8.1"
 
+libraryDependencies += "edu.washington.cs" % "figer_2.10" % "0"
+
 
 scalaVersion := "2.11.8"
 
-assemblyJarName in assembly := "linked-graphast.jar"
-
+mappings in (Compile, packageBin) ~= { _.filter(!_._1.getName.endsWith(".model.gz")) }
