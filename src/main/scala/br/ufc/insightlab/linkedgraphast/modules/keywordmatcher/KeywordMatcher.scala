@@ -1,7 +1,7 @@
 package br.ufc.insightlab.linkedgraphast.modules.keywordmatcher
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
-import org.insightlab.graphast.model.Node
+import br.ufc.insightlab.graphast.model.Node
 
 trait KeywordMatcher {
 

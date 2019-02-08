@@ -3,7 +3,7 @@ package br.ufc.insightlab.linkedgraphast.modules.keywordmatcher
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.model.node.LinkedNode
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.SimilarityMetric
-import org.insightlab.graphast.model.Node
+import br.ufc.insightlab.graphast.model.Node
 
 class SimilarityKeywordMatcher(metric: SimilarityMetric, threshold: Double = 0.9) extends KeywordMatcher {
 

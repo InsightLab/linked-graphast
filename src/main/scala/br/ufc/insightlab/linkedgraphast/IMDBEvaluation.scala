@@ -1,18 +1,21 @@
+package br.ufc.insightlab.linkedgraphast
+
 import java.io.{File, PrintWriter}
 
-import br.ufc.insightlab.ror.entities.{ResultQuery, ResultQuerySet}
-import br.ufc.insightlab.ror.implementations.OntopROR
-import experiments.{CharPermutationExperiment, WordAndCharPermutationExperiment, WordPermutationExperiment}
+import br.ufc.insightlab.linkedgraphast.experiments.Experiment
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity._
 import br.ufc.insightlab.linkedgraphast.modules.querybuilder.SchemaSPARQLQueryBuilder
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
+import br.ufc.insightlab.ror.entities.{ResultQuery, ResultQuerySet}
+import br.ufc.insightlab.ror.implementations.OntopROR
+import br.ufc.insightlab.linkedgraphast.metrics.Recall
 import org.slf4j.LoggerFactory
 
-import scala.io.Source
 import scala.collection.JavaConverters._
+import scala.io.Source
 
 object IMDBEvaluation {
 
@@ -33,7 +36,7 @@ object IMDBEvaluation {
     val writer = new PrintWriter(new File(filePath))
     val it = result.iterator
     val result0 = if (it.hasNext) it.next() else new ResultQuery(0)
-
+    println(result0)
     val header = result0.getProjections.asScala.toList
 
     writer.println(header.mkString("\t"))
@@ -66,7 +69,7 @@ object IMDBEvaluation {
 
   def recallExperiment(generate: Boolean = true, processSPARQL: Boolean = true): Unit = {
     for{
-      i <- 1 to 10
+      i <- 1 to 1
       if i != 5
       if i != 7
       if i != 9
@@ -100,7 +103,7 @@ object IMDBEvaluation {
     logger.info("Running matcher experiments")
 
     for{
-      i <- 1 to 10
+      i <- 1 to 1
       if i != 5
       if i != 7
       if i != 9
@@ -115,10 +118,10 @@ object IMDBEvaluation {
       val (nodes,_) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler), 0.8)(graph)(search)
       val fragment = SteinerTree(graph)(nodes.toList)
 
-      val experiments = List(
-        new WordPermutationExperiment(search,graph),
-        new CharPermutationExperiment(search,graph),
-        new WordAndCharPermutationExperiment(search,graph)
+      val experiments: List[Experiment] = List(
+//        new WordPermutationExperiment(search,graph),
+//        new CharPermutationExperiment(search,graph),
+//        new WordAndCharPermutationExperiment(search,graph)
       )
 
       for(e <- experiments){

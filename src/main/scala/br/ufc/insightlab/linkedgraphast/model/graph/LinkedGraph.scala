@@ -4,8 +4,8 @@ import java.lang
 import java.util.stream.StreamSupport
 
 import scala.collection.JavaConverters._
-import org.insightlab.graphast.model.{Edge, Graph, Node}
-import org.insightlab.graphast.structure.{DefaultGraphStructure, GraphStructure}
+import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
+import br.ufc.insightlab.graphast.structure.{DefaultGraphStructure, GraphStructure}
 import br.ufc.insightlab.linkedgraphast.model.helper.LinkedNodeHelper
 import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Link, Relation}
 import br.ufc.insightlab.linkedgraphast.model.node.{LinkedNode, Literal}

@@ -1,9 +1,9 @@
-package experiments
+package br.ufc.insightlab.linkedgraphast.experiments
 
-import org.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
-import org.insightlab.linkedgraphast.modules.keywordmatcher.similarity.{JaroWinkler, PermutedSimilarity, SimilarityMetric}
-import org.insightlab.linkedgraphast.model.graph.LinkedGraph
-import org.insightlab.linkedgraphast.query.steinertree.SteinerTree
+import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
+import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.{JaroWinkler, PermutedSimilarity, SimilarityMetric}
+import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
+import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 
 abstract class Experiment(t: String, graph: LinkedGraph) {
   private val filterRegex = "\\[([a-zA-Z]*|<[=]?|>[=]?|[!]?=);[^\\]]*\\]"

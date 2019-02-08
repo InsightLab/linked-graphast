@@ -1,4 +1,4 @@
-package metrics
+package br.ufc.insightlab.linkedgraphast.metrics
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.io.Source
