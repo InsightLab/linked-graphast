@@ -204,6 +204,21 @@ object SchemaSPARQLQueryBuilder {
     })
 
     for {
+      (property,range) <- rangesMap
+    } {
+      val s = getVar(property)
+      query.addResultVar(s)
+
+      val p = model.createProperty(property).asNode
+
+      val o = getVar(range, block)
+      query.addResultVar(o)
+
+      val pattern = new Triple(s, p, o)
+      block.addTriple(pattern)
+    }
+
+    for {
       (property, subjects) <- domainsMap
       if isDataTypeProperty(property, schema)
       subject <- subjects
@@ -234,15 +249,23 @@ object SchemaSPARQLQueryBuilder {
       if !isDataTypeProperty(property, schema)
       subject <- subjects
       range <- getRanges(property, schema)
-      if hasVar(range)
+//      if hasVar(range)
     } {
       val s = getVar(subject, block)
       query.addResultVar(s)
 
       val p = model.createProperty(property).asNode
 
-      val o = getVar(range)
-      query.addResultVar(o)
+      print((range,subject))
+      val o = if(range == subject){
+        val o = getVar(range+"_2")
+        query.addResultVar(o)
+        o
+      } else {
+        val o = getVar(range)
+        query.addResultVar(o)
+        o
+      }
 
       val pattern = new Triple(s, p, o)
       block.addTriple(pattern)
@@ -519,6 +542,14 @@ object SchemaSPARQLQueryBuilder {
       .asScala
       .map(_.asInstanceOf[Link])
       .filter(_.uri.uri.endsWith("#range"))
+      .map(_.target.value)
+      .toList
+
+  private[querybuilder] def getDomains(uri: String, schema: LinkedGraph): List[String] =
+    schema.getInEdges(schema.getNodeByURI(uri).getId)
+      .asScala
+      .map(_.asInstanceOf[Link])
+      .filter(_.uri.uri.endsWith("#domains"))
       .map(_.target.value)
       .toList
 }
