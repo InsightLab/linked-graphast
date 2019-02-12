@@ -1,1 +1,1 @@
-find the budget, gross, imdb rating, actor birth name, director birth name, producer birth name and editor birth name of movies
+find the budget, gross, imdb rating of movies where the birth name of the actor, director, producer and editor are the same

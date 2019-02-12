@@ -1,8 +1,23 @@
-SELECT  ?Movie ?Movie_title ?Movie_productionStartYear ?Movie_imdbrating
+SELECT  ?Production_Company ?Movie ?Producer ?Editor ?Film_Director ?Movie_title ?Production_Company_companyName ?Movie_gross ?Film_Director_birthName ?Movie_budget
 WHERE
-  { FILTER ( ?Movie_productionStartYear > "2012"^^<http://www.w3.org/2001/XMLSchema#int> )
-    FILTER ( ?Movie_imdbrating > "9"^^<http://www.w3.org/2001/XMLSchema#decimal> )
-    ?Movie  <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title ;
-            <http://dbpedia.org/ontology/productionStartYear>  ?Movie_productionStartYear ;
-            <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating
+  { FILTER contains(lcase(str(?Movie_title)), "finding nemo")
+    ?Production_Company
+              a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Production_Company> .
+    ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
+    ?Production_Company
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#produced>  ?Movie .
+    ?Producer  a                    <http://www.movieontology.org/2009/10/01/movieontology.owl#Producer> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasProducer>  ?Producer .
+    ?Editor   a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Editor> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasEditor>  ?Editor .
+    ?Film_Director
+              a                     <http://dbpedia.org/page/Film_Director> ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#isDirectorOf>  ?Movie .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title .
+    ?Production_Company
+              <http://www.movieontology.org/2009/11/09/movieontology.owl#companyName>  ?Production_Company_companyName .
+    ?Movie    <http://dbpedia.org/ontology/gross>  ?Movie_gross .
+    ?Film_Director
+              <http://dbpedia.org/ontology/birthName>  ?Film_Director_birthName .
+    ?Movie    <http://dbpedia.org/ontology/budget>  ?Movie_budget
   }
