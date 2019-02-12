@@ -15,11 +15,11 @@ dc:		http://purl.org/dc/elements/1.1/
 mo2:	http://www.movieontology.org/2009/11/09/movieontology.owl#
 
 [SourceDeclaration]
-sourceUri     imdb
-connectionUrl jdbc:teiid:imdbdatabase@mm://localhost:8891
-username     user
-password     pass
-driverClass     org.teiid.jdbc.TeiidDriver
+sourceUri	    imdb
+connectionUrl	jdbc:mysql://localhost:3306/imdb_database_full
+username	    imdb
+password	    imdb
+driverClass	    com.mysql.jdbc.Driver
 
 [MappingDeclaration] @collection [[
 mappingId	Actor
@@ -68,7 +68,7 @@ source		select name.id as person_id, name.name as name from name
 
 mappingId	Movie has rating
 target		imdb:title/{movie_id} mo:imdbrating {rating}^^xsd:decimal .
-source		select movie_id, info as rating from movie_info_idx_view where info_type_id = 101
+source		select movie_id, info as rating from movie_info_idx where info_type_id = 101
 
 mappingId	Movies with any types of genre
 target		imdb:title/{title_id} mo:belongsToGenre imdb:genre/{title_id} .
