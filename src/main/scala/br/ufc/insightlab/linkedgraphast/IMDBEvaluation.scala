@@ -11,7 +11,7 @@ import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 import br.ufc.insightlab.ror.entities.{ResultQuery, ResultQuerySet}
 import br.ufc.insightlab.ror.implementations.OntopROR
-import br.ufc.insightlab.linkedgraphast.metrics.Recall
+import br.ufc.insightlab.linkedgraphast.metrics.{Precision, Recall}
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
@@ -67,7 +67,7 @@ object IMDBEvaluation {
   }
 
   def recallExperiment(generate: Boolean = true, processSPARQL: Boolean = true): Unit = {
-    val recalls = for{
+    val metrics = for{
       i <- 1 to 37
     } yield {
       val path = s"src/evaluation/resources/query$i/"
@@ -89,12 +89,17 @@ object IMDBEvaluation {
       val recall = Recall(s"src/evaluation/resources/query$i/benchmark-results.tsv",
         s"src/evaluation/resources/query$i/generated-results.tsv")
 
-      logger.info(s"Recall value: $recall")
+      val precision = Precision(s"src/evaluation/resources/query$i/benchmark-results.tsv",
+        s"src/evaluation/resources/query$i/generated-results.tsv")
 
-      recall
+      logger.info(s"Recall value: $recall | Precision value: $precision")
+
+      (recall, precision)
     }
-
-    logger.info(s"Mean recall: ${recalls.sum/recalls.size}")
+    val sums = metrics.foldLeft((0.0,0.0))((acc, t) => (acc._1 + t._1 , acc._2 + t._2))
+    val meanRecall = sums._1 / metrics.size
+    val meanPrecision = sums._2 / metrics.size
+    logger.info(s"Mean recall: $meanRecall | Mean precision: $meanPrecision")
   }
 
   def matcherExperiment(): Unit = {
