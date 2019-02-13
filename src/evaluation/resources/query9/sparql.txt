@@ -3,5 +3,5 @@ PREFIX mo: <http://www.movieontology.org/2009/10/01/movieontology.owl#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT $x $y
 WHERE {
-   $x a mo:Movie; mo:title "Finding Nemo"^^xsd:string; mo:belongsToGenre $y
+   $x a mo:Movie; mo:title "Finding Nemo"; mo:belongsToGenre $y
 }

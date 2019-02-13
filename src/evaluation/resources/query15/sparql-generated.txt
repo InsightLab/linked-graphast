@@ -1,6 +1,6 @@
 SELECT  ?Movie ?Movie_productionStartYear ?Movie_title
 WHERE
-  { FILTER contains(lcase(str(?Movie_title)), "finding nemo")
+  { FILTER regex(lcase(str(?Movie_title)), "^finding nemo$", "i")
     ?Movie  a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> ;
             <http://dbpedia.org/ontology/productionStartYear>  ?Movie_productionStartYear ;
             <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title

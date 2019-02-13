@@ -1,13 +1,12 @@
-SELECT  ?Production_Company ?Europe ?Country ?Country_countryCode ?Production_Company_companyName
+SELECT  ?Country ?Europe ?Production_Company ?Country_countryCode ?Production_Company_companyName
 WHERE
-  { ?Production_Company
-              a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Production_Company> .
+  { ?Country  a                     <http://dbpedia.org/ontology/Country> .
     ?Europe   a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Europe> .
+    ?Country  <http://www.movieontology.org/2009/10/01/movieontology.owl#partOfTerritory>  ?Europe .
     ?Production_Company
+              a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Production_Company> ;
               <http://www.movieontology.org/2009/11/09/movieontology.owl#hasCompanyLocation>  ?Europe .
-    ?Country  a                     <http://dbpedia.org/ontology/Country> ;
-              <http://www.movieontology.org/2009/10/01/movieontology.owl#partOfTerritory>  ?Europe ;
-              <http://www.movieontology.org/2009/11/09/movieontology.owl#countryCode>  ?Country_countryCode .
+    ?Country  <http://www.movieontology.org/2009/11/09/movieontology.owl#countryCode>  ?Country_countryCode .
     ?Production_Company
               <http://www.movieontology.org/2009/11/09/movieontology.owl#companyName>  ?Production_Company_companyName
   }

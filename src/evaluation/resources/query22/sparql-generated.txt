@@ -1,9 +1,10 @@
-SELECT  ?Movie ?Editor ?Movie_title ?Editor_birthName
+SELECT  ?Movie ?Editor ?hasEditor ?Movie_title ?Editor_birthName
 WHERE
-  { FILTER contains(lcase(str(?Movie_title)), "finding nemo")
-    ?Movie   a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
-    ?Editor  a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Editor> .
-    ?Movie   <http://www.movieontology.org/2009/10/01/movieontology.owl#hasEditor>  ?Editor ;
-             <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title .
-    ?Editor  <http://dbpedia.org/ontology/birthName>  ?Editor_birthName
+  { FILTER regex(lcase(str(?Movie_title)), "^finding nemo$", "i")
+    ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
+    ?Editor   a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Editor> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasEditor>  ?Editor .
+    ?hasEditor  <http://www.movieontology.org/2009/10/01/movieontology.owl#hasEditor>  ?Editor .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title .
+    ?Editor   <http://dbpedia.org/ontology/birthName>  ?Editor_birthName
   }

@@ -1,1 +1,1 @@
-find film director with birth name[contains;Tarantino, Quentin]
+find film director with birth name[=;Tarantino, Quentin]

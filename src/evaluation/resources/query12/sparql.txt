@@ -4,5 +4,5 @@ PREFIX dbpedia: <http://dbpedia.org/ontology/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT $x $y
 WHERE {
-   $x a mo:TVSeries; mo:title "24"^^xsd:string; dbpedia:budget $y
+   $x a mo:TVSeries; mo:title "24"; dbpedia:budget $y
 }

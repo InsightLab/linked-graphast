@@ -1,1 +1,1 @@
-find TV Series with title[contains;24]
+find TV Series with title[=;24]

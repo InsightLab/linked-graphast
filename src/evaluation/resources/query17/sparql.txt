@@ -4,6 +4,6 @@ PREFIX dbpedia: <http://dbpedia.org/ontology/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT $x $z
 WHERE {
-   $x a mo:Movie. $x mo:title "Finding Nemo"^^xsd:string;  mo:hasActor $y .
+   $x a mo:Movie. $x mo:title "Finding Nemo";  mo:hasActor $y .
    $y dbpedia:birthName $z
 }

@@ -1,6 +1,6 @@
 SELECT  ?TVSeries ?TVSeries_gross ?TVSeries_title
 WHERE
-  { FILTER contains(lcase(str(?TVSeries_title)), "24")
+  { FILTER regex(lcase(str(?TVSeries_title)), "^24$", "i")
     ?TVSeries  a                    <http://www.movieontology.org/2009/10/01/movieontology.owl#TVSeries> ;
               <http://dbpedia.org/ontology/gross>  ?TVSeries_gross ;
               <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?TVSeries_title

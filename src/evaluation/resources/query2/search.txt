@@ -1,1 +1,1 @@
-find actor with birth name[contains;Aaker, Lee]
+find actor with birth name[=;Aaker, Lee]

@@ -1,1 +1,1 @@
-find the production start year of series with title[contains;24]
+find the production start year of series with title[=;24]

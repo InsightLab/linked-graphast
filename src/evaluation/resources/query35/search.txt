@@ -1,1 +1,1 @@
-find the budget, gross, director birth name, producer birth name, editor birth name and company name of movie with title[contains;Finding Nemo]
+find the budget, gross, director birth name, producer birth name, editor birth name and company name of movie with title[=;Finding Nemo]

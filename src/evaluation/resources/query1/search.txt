@@ -1,1 +1,1 @@
-find actress with birth name[contains;Pfeiffer, Michelle]
+find actress with birth name[=;Pfeiffer, Michelle]

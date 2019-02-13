@@ -1,1 +1,1 @@
-find producer with birth name[contains;Silver, Joel]
+find producer with birth name[=;Silver, Joel]

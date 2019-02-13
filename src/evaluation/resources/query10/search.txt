@@ -1,1 +1,1 @@
-find the genre of tv series with title[contains;24]
+find the genre of tv series with title[=;24]

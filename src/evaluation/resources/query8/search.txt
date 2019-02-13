@@ -1,1 +1,1 @@
-find editor with birth name[contains;Rawlings, Terry]
+find editor with birth name[=;Rawlings, Terry]

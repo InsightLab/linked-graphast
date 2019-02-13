@@ -1,1 +1,1 @@
-find writer with birth name[contains;Barker, Clive]
+find writer with birth name[=;Barker, Clive]

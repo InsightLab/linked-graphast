@@ -5,7 +5,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 select ?x ?genre ?production_year ?budget ?gross ?rating ?actor_name ?director_name ?producer_name ?editor_name
 where {
   ?x a mo:Movie;
-       mo:title "Finding Nemo"^^xsd:string;
+       mo:title "Finding Nemo";
        mo:belongsToGenre ?genre;
        dbpedia:productionStartYear ?production_year;
        dbpedia:budget ?budget;

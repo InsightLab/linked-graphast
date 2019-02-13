@@ -1,6 +1,6 @@
 SELECT  ?Actor ?Actor_birthName
 WHERE
-  { FILTER contains(lcase(str(?Actor_birthName)), "aaker, lee")
+  { FILTER regex(lcase(str(?Actor_birthName)), "^aaker, lee$", "i")
     ?Actor  a                     <http://dbpedia.org/ontology/Actor> ;
             <http://dbpedia.org/ontology/birthName>  ?Actor_birthName
   }

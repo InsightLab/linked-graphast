@@ -4,7 +4,7 @@ PREFIX dbpedia: <http://dbpedia.org/ontology/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT $x $budget $gross $director_name $producer_name $editor_name $company_name
 WHERE {
-   $x a mo:Movie; mo:title "Finding Nemo"^^xsd:string;
+   $x a mo:Movie; mo:title "Finding Nemo";
         dbpedia:budget $budget;
         dbpedia:gross $gross .
    $x mo:hasDirector $director . $director dbpedia:birthName $director_name .
