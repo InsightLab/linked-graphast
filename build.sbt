@@ -7,6 +7,7 @@ publishConfiguration := publishConfiguration.value.withOverwrite(true)
 
 
 resolvers += Resolver.mavenLocal
+resolvers += "Insight Lab github Maven2 Repository" at "http://www.insightlab.ufc.br/maven-repo/"
 
 libraryDependencies += "br.ufc.insightlab" % "graphast-core" % "1.1.0"
 libraryDependencies += "br.ufc.insightlab" % "ror" % "1.0.0"
