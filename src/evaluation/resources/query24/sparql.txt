@@ -5,5 +5,6 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT $title $company
 WHERE {
    $x a mo:Movie. $x mo:title ?title;  mo:isProducedBy $y .
-   $y a mo:East_Asian_Company ; :companyName $company .
+   $y :hasCompanyLocation $z; :companyName $company .
+   $z a mo:Eastern_Asia .
 }

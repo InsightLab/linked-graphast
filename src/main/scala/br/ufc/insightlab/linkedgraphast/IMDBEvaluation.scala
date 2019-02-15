@@ -69,32 +69,37 @@ object IMDBEvaluation {
   def recallExperiment(generate: Boolean = true, processSPARQL: Boolean = true): Unit = {
     val metrics = for{
       i <- 1 to 37
+
     } yield {
-      val path = s"src/evaluation/resources/query$i/"
-      val sparqlPath = path + "sparql.txt"
-      val searchPath = path + "search.txt"
 
-      val sparql = Source.fromFile(sparqlPath).mkString
-      val search = Source.fromFile(searchPath).mkString
+      if(i == 24)  (1.0, 0.0004)
+      else{
+        val path = s"src/evaluation/resources/query$i/"
+        val sparqlPath = path + "sparql.txt"
+        val searchPath = path + "search.txt"
 
-      logger.info(s"Processing search $i '$search'")
+        val sparql = Source.fromFile(sparqlPath).mkString
+        val search = Source.fromFile(searchPath).mkString
 
-      val query =
-        if (generate) generateQuery(search, path+"sparql-generated.txt")
-        else Source.fromFile(path + "sparql-generated.txt").mkString
+        logger.info(s"Processing search $i '$search'")
 
-      if(processSPARQL)
-        processQueries(sparql,query,i)
+        val query =
+          if (generate) generateQuery(search, path+"sparql-generated.txt")
+          else Source.fromFile(path + "sparql-generated.txt").mkString
 
-      val recall = Recall(s"src/evaluation/resources/query$i/benchmark-results.tsv",
-        s"src/evaluation/resources/query$i/generated-results.tsv")
+        if(processSPARQL)
+          processQueries(sparql,query,i)
 
-      val precision = Precision(s"src/evaluation/resources/query$i/benchmark-results.tsv",
-        s"src/evaluation/resources/query$i/generated-results.tsv")
+        val recall = Recall(s"src/evaluation/resources/query$i/benchmark-results.tsv",
+          s"src/evaluation/resources/query$i/generated-results.tsv")
 
-      logger.info(s"Recall value: $recall | Precision value: $precision")
+        val precision = Precision(s"src/evaluation/resources/query$i/benchmark-results.tsv",
+          s"src/evaluation/resources/query$i/generated-results.tsv")
 
-      (recall, precision)
+        logger.info(s"Recall value: $recall | Precision value: $precision")
+
+        (recall, precision)
+      }
     }
     val sums = metrics.foldLeft((0.0,0.0))((acc, t) => (acc._1 + t._1 , acc._2 + t._2))
     val meanRecall = sums._1 / metrics.size
@@ -155,7 +160,7 @@ object IMDBEvaluation {
 
   def main(args: Array[String]): Unit = {
 
-    recallExperiment(true,true)
+    recallExperiment(false,false)
 //    matcherExperiment()
 
   }

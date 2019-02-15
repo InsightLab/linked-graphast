@@ -143,7 +143,7 @@ object SchemaSPARQLQueryBuilder {
     val graph = compressSubclasses(g, filtersMap)
 
     //    println("Compressed fragment:")
-    //    graph.getLinksAsStream.foreach(println)
+    //    println(graph.linksAsString())
 
     var domainsMap = Map[String, List[String]]()
     var rangesMap = Map[String, String]()

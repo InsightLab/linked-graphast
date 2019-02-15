@@ -1,8 +1,8 @@
-SELECT  ?Movie ?Actor ?Film_Director ?Love ?Movie_title ?Actor_birthName
+SELECT  ?Actor ?Movie ?Film_Director ?Love ?Movie_title ?Actor_birthName
 WHERE
-  { ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
-    ?Actor    a                     <http://dbpedia.org/ontology/Actor> .
-    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasMaleActor>  ?Actor .
+  { ?Actor    a                     <http://dbpedia.org/ontology/Actor> .
+    ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
+    ?Actor    <http://www.movieontology.org/2009/11/09/movieontology.owl#isMaleActorIn>  ?Movie .
     ?Film_Director
               a                     <http://dbpedia.org/page/Film_Director> ;
               <http://www.movieontology.org/2009/10/01/movieontology.owl#isDirectorOf>  ?Movie .

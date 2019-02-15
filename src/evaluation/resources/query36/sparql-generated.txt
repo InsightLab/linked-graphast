@@ -1,14 +1,16 @@
-SELECT  ?Actor ?Movie ?Film_Director ?Movie_title ?Movie_imdbrating ?Movie_productionStartYear ?Actor_birthName
+SELECT  ?Movie ?Actor ?Film_Director ?hasMaleActor ?Movie_title ?Movie_imdbrating ?Movie_productionStartYear ?Actor_birthName
 WHERE
   { FILTER ( ?Movie_imdbrating > "7"^^<http://www.w3.org/2001/XMLSchema#decimal> )
     FILTER ( ?Movie_productionStartYear >= "2000"^^<http://www.w3.org/2001/XMLSchema#int> )
     FILTER ( ?Movie_productionStartYear <= "2010"^^<http://www.w3.org/2001/XMLSchema#int> )
-    ?Actor    a                     <http://dbpedia.org/ontology/Actor> .
     ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
-    ?Actor    <http://www.movieontology.org/2009/11/09/movieontology.owl#isMaleActorIn>  ?Movie .
+    ?Actor    a                     <http://dbpedia.org/ontology/Actor> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasMaleActor>  ?Actor .
     ?Film_Director
               a                     <http://dbpedia.org/page/Film_Director> ;
               <http://www.movieontology.org/2009/10/01/movieontology.owl#isDirectorOf>  ?Movie .
+    ?hasMaleActor
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#hasMaleActor>  ?Actor .
     ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title ;
               <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating ;
               <http://dbpedia.org/ontology/productionStartYear>  ?Movie_productionStartYear .

@@ -46,7 +46,7 @@
 <http://www.movieontology.org/2009/10/01/movieontology.owl#hasActor> <http://www.w3.org/2000/01/rdf-schema#range> <http://dbpedia.org/ontology/Actor> .
 <http://www.movieontology.org/2009/10/01/movieontology.owl#hasActress> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <http://www.movieontology.org/2009/10/01/movieontology.owl#hasActress> <http://www.w3.org/2000/01/rdf-schema#label> "has actress"@en .
-<http://www.movieontology.org/2009/10/01/movieontology.owl#hasActress> <http://www.w3.org/2000/01/rdf-schema#domain> <http://dbpedia.org/ontology/Actor> .
+<http://www.movieontology.org/2009/10/01/movieontology.owl#hasActress> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
 <http://www.movieontology.org/2009/10/01/movieontology.owl#hasActress> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.movieontology.org/2009/11/09/movieontology.owl#Actress> .
 <http://www.movieontology.org/2009/10/01/movieontology.owl#hasCostumeDesigner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <http://www.movieontology.org/2009/10/01/movieontology.owl#hasCostumeDesigner> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.movieontology.org/2009/10/01/movieontology.owl#Costume_Designer> .
