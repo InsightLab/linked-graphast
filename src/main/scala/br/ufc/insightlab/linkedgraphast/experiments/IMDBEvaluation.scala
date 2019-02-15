@@ -1,8 +1,8 @@
-package br.ufc.insightlab.linkedgraphast
+package br.ufc.insightlab.linkedgraphast.experiments
 
 import java.io.{File, PrintWriter}
 
-import br.ufc.insightlab.linkedgraphast.experiments.Experiment
+import br.ufc.insightlab.linkedgraphast.metrics.{Precision, Recall}
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity._
@@ -11,7 +11,6 @@ import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 import br.ufc.insightlab.ror.entities.{ResultQuery, ResultQuerySet}
 import br.ufc.insightlab.ror.implementations.OntopROR
-import br.ufc.insightlab.linkedgraphast.metrics.{Precision, Recall}
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
@@ -22,14 +21,14 @@ object IMDBEvaluation {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   val ror = new OntopROR(
-    "src/evaluation/resources/MovieOntology.owl",
-    "src/evaluation/resources/mapping.obda")
+    "src/evaluation/resources/imdb/MovieOntology.owl",
+    "src/evaluation/resources/imdb/mapping.obda")
 
   def processQueries(original: String, generated: String, i:  Int): Unit = {
     logger.debug("Exporting benchmark results")
-    exportQueryResultsTSV(ror.runQuery(original),s"src/evaluation/resources/query$i/benchmark-results.tsv")
+    exportQueryResultsTSV(ror.runQuery(original),s"src/evaluation/resources/imdb/query$i/benchmark-results.tsv")
     logger.debug("Exporting generated results")
-    exportQueryResultsTSV(ror.runQuery(generated),s"src/evaluation/resources/query$i/generated-results.tsv")
+    exportQueryResultsTSV(ror.runQuery(generated),s"src/evaluation/resources/imdb/query$i/generated-results.tsv")
   }
 
   def exportQueryResultsTSV(result: ResultQuerySet, filePath: String): Unit = {
@@ -74,7 +73,7 @@ object IMDBEvaluation {
 
       if(i == 24)  (1.0, 0.0004)
       else{
-        val path = s"src/evaluation/resources/query$i/"
+        val path = s"src/evaluation/resources/imdb/query$i/"
         val sparqlPath = path + "sparql.txt"
         val searchPath = path + "search.txt"
 
@@ -90,11 +89,11 @@ object IMDBEvaluation {
         if(processSPARQL)
           processQueries(sparql,query,i)
 
-        val recall = Recall(s"src/evaluation/resources/query$i/benchmark-results.tsv",
-          s"src/evaluation/resources/query$i/generated-results.tsv")
+        val recall = Recall(s"src/evaluation/resources/imdb/query$i/benchmark-results.tsv",
+          s"src/evaluation/resources/imdb/query$i/generated-results.tsv")
 
-        val precision = Precision(s"src/evaluation/resources/query$i/benchmark-results.tsv",
-          s"src/evaluation/resources/query$i/generated-results.tsv")
+        val precision = Precision(s"src/evaluation/resources/imdb/query$i/benchmark-results.tsv",
+          s"src/evaluation/resources/imdb/query$i/generated-results.tsv")
 
         logger.info(s"Recall value: $recall | Precision value: $precision")
 
@@ -107,61 +106,9 @@ object IMDBEvaluation {
     logger.info(s"Mean recall: $meanRecall | Mean precision: $meanPrecision")
   }
 
-  def matcherExperiment(): Unit = {
-
-    logger.info("Running matcher experiments")
-
-    for{
-      i <- 1 to 1
-      if i != 5
-      if i != 7
-      if i != 9
-    } {
-      val path = s"src/evaluation/resources/query$i/"
-      val searchPath = path + "search.txt"
-
-      val search = Source.fromFile(searchPath).mkString
-
-      logger.info(s"Processing search $i '$search'")
-
-      val (nodes,_) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler), 0.8)(graph)(search)
-      val fragment = SteinerTree(graph)(nodes.toList)
-
-      val experiments: List[Experiment] = List(
-//        new WordPermutationExperiment(search,graph),
-//        new CharPermutationExperiment(search,graph),
-//        new WordAndCharPermutationExperiment(search,graph)
-      )
-
-      for(e <- experiments){
-        val metrics = List(
-          JaroWinkler,new PermutedSimilarity(JaroWinkler),
-          Jaccard, new PermutedSimilarity(Jaccard),
-          NGram, new PermutedSimilarity(NGram)
-        )
-
-        val results = e.run(fragment, metrics)
-
-        val values = for(j <- metrics.indices) yield {
-          val metricResults = results.map(_(j))
-          val mean = metricResults.sum/metricResults.length * 100
-
-          f"$mean%,.1f\\%%"
-        }
-
-        logger.info(s"$e: ${values mkString(""," & ", " \\\\ \\hline")}")
-
-
-      }
-
-
-    }
-  }
-
   def main(args: Array[String]): Unit = {
 
     recallExperiment(false,false)
-//    matcherExperiment()
 
   }
 
