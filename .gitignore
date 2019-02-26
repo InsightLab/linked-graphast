@@ -3,7 +3,7 @@ src/main/resources/figer.new.model.gz
 .idea/
 *.db
 **/*.tsv
-
+src/evaluation/resources/QALD/*
 # Created by https://www.gitignore.io/api/sbt,macos,linux,scala,intellij
 
 ### Intellij ###

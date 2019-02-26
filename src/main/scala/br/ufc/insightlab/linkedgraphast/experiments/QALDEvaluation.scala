@@ -40,7 +40,7 @@ object QALDEvaluation{
 
   val basePath = "src/evaluation/resources/QALD"
 
-  val string = Source.fromFile("src/evaluation/resources/QALD-7.json").getLines.mkString("\n")
+  val string = Source.fromFile("src/evaluation/resources/QALD-6.json").getLines.mkString("\n")
 
   val data = Json.parse(string)
     .as[JsArray]
@@ -64,7 +64,7 @@ object QALDEvaluation{
         .foreach(FileUtils.deleteDirectory)
     }
 
-    val metrics = for(q <- data.filterNot(_.sparql.contains("ASK WHERE"))) yield {
+    val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
       logger.info(s"Processing query ${q.id}: ${q.text}")
       val path = basePath+"/question"+q.id
 
@@ -122,10 +122,10 @@ object QALDEvaluation{
       println(s"$nonZero non-zero results!")
       val sums: ((Double, Double), (Double, Double)) = metrics.foldLeft((0.0,0.0), (0.0,0.0))((acc, t) => (((acc._1)._1 + t._1._1 , (acc._1)._2 + t._1._2), ((acc._2)._1 + t._2._1 , (acc._2)._2 + t._2._2)))
 
-//      val meanRecall = (sums._1)._1 / metrics.size
-//      val meanPrecision = (sums._1)._2 / metrics.size
-//      logger.info(s"Mean recall without NER: $meanRecall | Mean precision without NER: $meanPrecision")
-//      logger.info(s"Mean non-zero recall without NER: ${(sums._1)._1/nonZero} | Mean non-zero precision without NER: ${(sums._1)._2/nonZero}")
+      val meanRecall = (sums._1)._1 / metrics.size
+      val meanPrecision = (sums._1)._2 / metrics.size
+      logger.info(s"Mean recall without NER: $meanRecall | Mean precision without NER: $meanPrecision")
+      logger.info(s"Mean non-zero recall without NER: ${(sums._1)._1/nonZero} | Mean non-zero precision without NER: ${(sums._1)._2/nonZero}")
 
       val meanRecallNER = (sums._2)._1 / metrics.size
       val meanPrecisionNER = (sums._2)._2 / metrics.size
