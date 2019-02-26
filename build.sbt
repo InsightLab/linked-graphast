@@ -17,6 +17,7 @@ libraryDependencies += "org.teiid" % "teiid-client" % "10.2.0"
 libraryDependencies += "org.teiid" % "teiid-common-core" % "10.2.0"
 libraryDependencies += "org.teiid" % "teiid-api" % "10.2.0"
 
+libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.10"
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.6"
 

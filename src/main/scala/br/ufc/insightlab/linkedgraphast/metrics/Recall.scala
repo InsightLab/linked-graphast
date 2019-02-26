@@ -42,7 +42,7 @@ object Recall extends EvaluationMetric {
       }
     }
     logger.debug(s"Found: $foundData | Total: $totalData")
-    if(foundData == totalData) 1.0
+    if(foundData == 0 || totalData == 0) 0
     else foundData/totalData
   }
 }

@@ -256,7 +256,7 @@ object SchemaSPARQLQueryBuilder {
 
       val p = model.createProperty(property).asNode
 
-      print((range,subject))
+//      print((range,subject))
       val o = if(range == subject){
         val o = getVar(range+"_2")
         query.addResultVar(o)

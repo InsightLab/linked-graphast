@@ -10,8 +10,7 @@ object Precision extends EvaluationMetric {
     val totalExpected: Double = math.max(Source.fromFile(originalDataPath).getLines().count(!_.equals("\n")) - 1, 0)
 
 //    println(s"Total got: $totalGot | Total expected: $totalExpected")
-    if(totalExpected*recall == totalGot) 1
-    else if(totalGot == 0) 0
+    if(totalExpected == 0 || totalGot == 0) 0
     else totalExpected*recall/totalGot
   }
 }
