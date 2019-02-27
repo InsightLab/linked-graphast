@@ -40,7 +40,7 @@ object QALDEvaluation{
 
   val basePath = "src/evaluation/resources/QALD"
 
-  val string = Source.fromFile("src/evaluation/resources/QALD-6.json").getLines.mkString("\n")
+  val string = Source.fromFile("src/evaluation/resources/QALD-5.json").getLines.mkString("\n")
 
   val data = Json.parse(string)
     .as[JsArray]
@@ -57,14 +57,14 @@ object QALDEvaluation{
       Figer.init("src/main/resources/figer.conf")
     }
 
-    if(generateResults){
-      new File(basePath)
-        .listFiles()
-        .filter(_.isDirectory)
-        .foreach(FileUtils.deleteDirectory)
-    }
+//    if(generateResults){
+//      new File(basePath)
+//        .listFiles()
+//        .filter(_.isDirectory)
+//        .foreach(FileUtils.deleteDirectory)
+//    }
 
-    val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE")).filter(_.id > 211)) yield {
+    val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
       logger.info(s"Processing query ${q.id}: ${q.text}")
       val path = basePath+"/question"+q.id
 
@@ -136,7 +136,7 @@ object QALDEvaluation{
   }
 
   def main(args: Array[String]): Unit = {
-    val metrics = false
+    val metrics = true
     runExperiments(!metrics, !metrics, metrics)
   }
 
