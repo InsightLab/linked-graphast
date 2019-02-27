@@ -651,55 +651,6 @@
         }
     },
     {
-        "id": 94,
-        "string": "Which budget did the first movie of Zdenek Sverak have?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 95,
-        "string": "How many big fires struck Paris during the Middle Ages?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 96,
-        "string": "Is Pamela Anderson a vegan?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 97,
-        "string": "How often was Michael Jordan divorced?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 98,
-        "string": "What is the most beautiful painting?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 99,
-        "string": "Give me all animal species that live in the Amazon rainforest.",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 100,
-        "string": "When is the movie Worst Case Scenario going to be in cinemas in the Netherlands?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
         "id": 101,
         "string": "Which German cities have more than 250000 inhabitants?",
         "sparql": {
@@ -816,13 +767,6 @@
         "string": "Give me all cars that are produced in Germany.",
         "sparql": {
             "sparql": " PREFIX dbo: <http://dbpedia.org/ontology/> PREFIX dbp: <http://dbpedia.org/property/> PREFIX res: <http://dbpedia.org/resource/> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?uri WHERE { ?uri rdf:type dbo:Automobile . { ?uri dbo:assembly res:Germany . } UNION { ?uri dbp:asembly res:Germany . } UNION { { ?uri dbo:manufacturer ?x . } UNION { ?uri dbp:manufacturer ?x . } { ?x dbo:locationCountry res:Germany . } UNION { ?x dbo:location res:Germany . } } } "
-        }
-    },
-    {
-        "id": 118,
-        "string": "What were the main discoveries of the Mars rover Curiosity?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
         }
     },
     {
@@ -945,20 +889,6 @@
         }
     },
     {
-        "id": 136,
-        "string": "What is the melting point of copper?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 137,
-        "string": "Give me all sister cities of Brno.",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
         "id": 138,
         "string": "How many inhabitants does Maribor have?",
         "sparql": {
@@ -1022,13 +952,6 @@
         }
     },
     {
-        "id": 147,
-        "string": "What is the average temperature on Hawaii?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
         "id": 148,
         "string": "In which UK city are the headquarters of the MI6?",
         "sparql": {
@@ -1054,13 +977,6 @@
         "string": "Give me all islands that belong to Japan.",
         "sparql": {
             "sparql": " PREFIX dbo: <http://dbpedia.org/ontology/> PREFIX res: <http://dbpedia.org/resource/> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?uri WHERE { ?uri rdf:type dbo:Island . ?uri dbo:country res:Japan . } "
-        }
-    },
-    {
-        "id": 152,
-        "string": "Who invented the zipper?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
         }
     },
     {
@@ -1733,20 +1649,6 @@
         "string": "What does IYCM stand for?",
         "sparql": {
             "sparql": "PREFIX dbo: <http://dbpedia.org/ontology/>PREFIX res: <http://dbpedia.org/resource/>SELECT DISTINCT ?uriWHERE { ?uri dbo:abbreviation 'IYCM' .}"
-        }
-    },
-    {
-        "id": 249,
-        "string": "In which studio did the Beatles record their first album?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
-        }
-    },
-    {
-        "id": 250,
-        "string": "How many gold medals did Michael Phelps win at the 2008 Olympics?",
-        "sparql": {
-            "sparql": "OUT OF SCOPE"
         }
     },
     {
