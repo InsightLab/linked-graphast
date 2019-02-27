@@ -11,7 +11,7 @@ import br.ufc.insightlab.linkedgraphast.modules.vonqbe.VonQBESparqlBuilder
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import org.apache.commons.io.FileUtils
 import org.slf4j.LoggerFactory
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.{JsArray, Json, Reads}
 
 import scala.io.Source
 
@@ -64,7 +64,7 @@ object QALDEvaluation{
         .foreach(FileUtils.deleteDirectory)
     }
 
-    val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
+    val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE")).filter(_.id > 211)) yield {
       logger.info(s"Processing query ${q.id}: ${q.text}")
       val path = basePath+"/question"+q.id
 

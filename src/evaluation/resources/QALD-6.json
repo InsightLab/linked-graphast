@@ -651,41 +651,6 @@
     }
   },
   {
-    "id": 94,
-    "string": "Which budget did the first movie of Zdenek Sverak have?",
-    "sparql": {}
-  },
-  {
-    "id": 95,
-    "string": "How many big fires struck Paris during the Middle Ages?",
-    "sparql": {}
-  },
-  {
-    "id": 96,
-    "string": "Is Pamela Anderson a vegan?",
-    "sparql": {}
-  },
-  {
-    "id": 97,
-    "string": "How often was Michael Jordan divorced?",
-    "sparql": {}
-  },
-  {
-    "id": 98,
-    "string": "What is the most beautiful painting?",
-    "sparql": {}
-  },
-  {
-    "id": 99,
-    "string": "Give me all animal species that live in the Amazon rainforest.",
-    "sparql": {}
-  },
-  {
-    "id": 100,
-    "string": "When is the movie Worst Case Scenario going to be in cinemas in the Netherlands?",
-    "sparql": {}
-  },
-  {
     "id": 101,
     "string": "Which German cities have more than 250000 inhabitants?",
     "sparql": {
@@ -803,11 +768,6 @@
     "sparql": {
       "sparql": "SELECT DISTINCT ?uri WHERE {  ?uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Automobile> . { ?uri <http://dbpedia.org/ontology/assembly> <http://dbpedia.org/resource/Germany> . } UNION { ?uri <http://dbpedia.org/property/assembly> <http://dbpedia.org/resource/Germany> . } UNION { { ?uri <http://dbpedia.org/ontology/manufacturer> ?x . }  UNION  { ?uri <http://dbpedia.org/property/manufacturer> ?x . }  { ?x <http://dbpedia.org/ontology/locationCountry> <http://dbpedia.org/resource/Germany> . }  UNION  { ?x <http://dbpedia.org/ontology/location> <http://dbpedia.org/resource/Germany> . } } } "
     }
-  },
-  {
-    "id": 118,
-    "string": "What were the main discoveries of the Mars rover Curiosity?",
-    "sparql": {}
   },
   {
     "id": 119,
@@ -929,16 +889,6 @@
     }
   },
   {
-    "id": 136,
-    "string": "What is the melting point of copper?",
-    "sparql": {}
-  },
-  {
-    "id": 137,
-    "string": "Give me all sister cities of Brno.",
-    "sparql": {}
-  },
-  {
     "id": 138,
     "string": "How many inhabitants does Maribor have?",
     "sparql": {
@@ -1002,11 +952,6 @@
     }
   },
   {
-    "id": 147,
-    "string": "What is the average temperature on Hawaii?",
-    "sparql": {}
-  },
-  {
     "id": 148,
     "string": "In which UK city are the headquarters of the MI6?",
     "sparql": {
@@ -1033,11 +978,6 @@
     "sparql": {
       "sparql": "SELECT DISTINCT ?uri WHERE {  ?uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Island> .  ?uri <http://dbpedia.org/ontology/country> <http://dbpedia.org/resource/Japan> . } "
     }
-  },
-  {
-    "id": 152,
-    "string": "Who invented the zipper?",
-    "sparql": {}
   },
   {
     "id": 153,
@@ -1712,16 +1652,6 @@
     }
   },
   {
-    "id": 249,
-    "string": "In which studio did the Beatles record their first album?",
-    "sparql": {}
-  },
-  {
-    "id": 250,
-    "string": "How many gold medals did Michael Phelps win at the 2008 Olympics?",
-    "sparql": {}
-  },
-  {
     "id": 251,
     "string": "Which companies have more than 1 million employees?",
     "sparql": {
@@ -2357,11 +2287,6 @@
     "sparql": {
       "sparql": "SELECT DISTINCT ?uri WHERE {  <http://dbpedia.org/resource/Rotterdam> <http://dbpedia.org/ontology/leaderName> ?uri . } "
     }
-  },
-  {
-    "id": 342,
-    "string": "In which city were the parents of Che Guevara born?",
-    "sparql": {}
   },
   {
     "id": 343,
