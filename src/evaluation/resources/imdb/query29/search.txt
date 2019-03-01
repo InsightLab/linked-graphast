@@ -1,0 +1,1 @@
+find the title and company name of movies with production company located at Eastern Asia with production started year[>=;2000][<=;2010]

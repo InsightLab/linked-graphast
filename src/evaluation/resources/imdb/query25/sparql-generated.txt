@@ -1,0 +1,10 @@
+SELECT  ?Movie ?Brute_Action ?Movie_imdbrating ?Movie_title ?Movie_productionStartYear
+WHERE
+  { ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
+    ?Brute_Action
+              a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Brute_Action> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#belongsToGenre>  ?Brute_Action ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title ;
+              <http://dbpedia.org/ontology/productionStartYear>  ?Movie_productionStartYear
+  }

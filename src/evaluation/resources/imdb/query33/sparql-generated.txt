@@ -1,0 +1,9 @@
+SELECT  ?TVSeries ?Actionreach ?Movie ?Movie_title ?TVSeries_title
+WHERE
+  { ?TVSeries  a                    <http://www.movieontology.org/2009/10/01/movieontology.owl#TVSeries> .
+    ?Actionreach  a                 <http://www.movieontology.org/2009/10/01/movieontology.owl#Actionreach> .
+    ?TVSeries  <http://www.movieontology.org/2009/10/01/movieontology.owl#belongsToGenre>  ?Actionreach .
+    ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title .
+    ?TVSeries  <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?TVSeries_title
+  }

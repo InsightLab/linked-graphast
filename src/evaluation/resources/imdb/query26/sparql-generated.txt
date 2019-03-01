@@ -1,0 +1,6 @@
+SELECT  ?Movie ?Movie_imdbrating ?Movie_title
+WHERE
+  { ?Movie  a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> ;
+            <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating ;
+            <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title
+  }

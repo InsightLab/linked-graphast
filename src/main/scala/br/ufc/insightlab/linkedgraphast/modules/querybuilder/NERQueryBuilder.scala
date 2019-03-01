@@ -5,11 +5,14 @@ import br.ufc.insightlab.linkedgraphast.modules.figer.Figer
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.SimilarityMetric
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
+import org.slf4j.LoggerFactory
 
 
 class NERQueryBuilder(metric: SimilarityMetric, threshold: Double = 0.9) {
   require(threshold <= 1.0)
   require(threshold >= 0.0)
+
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   private val matcher =
     new SimilarityKeywordMatcherOptimizedWithFilters(metric, threshold)
@@ -41,14 +44,14 @@ class NERQueryBuilder(metric: SimilarityMetric, threshold: Double = 0.9) {
 
 
     val capText = filterPattern.replaceAllIn(text.split(" ").map(_.capitalize).mkString(" "),"")
-    println(s"Classifying entities for text: $capText")
+    logger.debug(s"Classifying entities for text: $capText")
 
     val entities = Figer.classify(capText)
-    println(s"\n${entities.size} entities found:\n${entities.mkString(" ")}")
+    logger.debug(s"\n${entities.size} entities found:\n${entities.mkString(" ")}")
 
     val textsCandidates = generateCombinations(capText, entities)
 
-    println(s"\n${textsCandidates.size} candidate texts:\n${textsCandidates.mkString("\n")}")
+    logger.debug(s"\n${textsCandidates.size} candidate texts:\n${textsCandidates.mkString("\n")}")
     if(textsCandidates.size == 1){
       val (nodes,filters) = matcher(graph)(textsCandidates.head)
       val fragment = SteinerTree(graph)(nodes.toList)
@@ -66,7 +69,7 @@ class NERQueryBuilder(metric: SimilarityMetric, threshold: Double = 0.9) {
 
 //    println(s"\n${maximalNodes.size} maximal nodes list:\n${maximalNodes.mkString("\n")}")
 
-    val fragments = maximalNodes.par
+    val fragments = maximalNodes
       .map{case (text, (nodes,filters)) =>
         (text, SteinerTree(graph)(nodes.toList), filters)}
       .toList.sortBy(x => getFragmentSize(x._2))

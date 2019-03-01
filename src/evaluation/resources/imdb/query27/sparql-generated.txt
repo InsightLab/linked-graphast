@@ -1,0 +1,21 @@
+SELECT  ?Movie ?Actor ?Producer ?Editor ?Film_Director ?hasActor ?hasProducer ?Movie_title ?Movie_imdbrating ?Movie_gross ?Actor_birthName ?Movie_budget
+WHERE
+  { FILTER regex(lcase(str(?Movie_title)), "^finding nemo$", "i")
+    ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
+    ?Actor    a                     <http://dbpedia.org/ontology/Actor> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasActor>  ?Actor .
+    ?Producer  a                    <http://www.movieontology.org/2009/10/01/movieontology.owl#Producer> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasProducer>  ?Producer .
+    ?Editor   a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Editor> .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#hasEditor>  ?Editor .
+    ?Film_Director
+              a                     <http://dbpedia.org/page/Film_Director> ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#isDirectorOf>  ?Movie .
+    ?hasActor  <http://www.movieontology.org/2009/10/01/movieontology.owl#hasActor>  ?Actor .
+    ?hasProducer  <http://www.movieontology.org/2009/10/01/movieontology.owl#hasProducer>  ?Producer .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#imdbrating>  ?Movie_imdbrating ;
+              <http://dbpedia.org/ontology/gross>  ?Movie_gross .
+    ?Actor    <http://dbpedia.org/ontology/birthName>  ?Actor_birthName .
+    ?Movie    <http://dbpedia.org/ontology/budget>  ?Movie_budget
+  }

@@ -1,0 +1,1 @@
+find the birth name and birth date of actor in the movie with title[=;Finding Nemo]
