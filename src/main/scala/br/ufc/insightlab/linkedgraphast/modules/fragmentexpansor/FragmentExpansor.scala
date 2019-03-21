@@ -9,7 +9,7 @@ import br.ufc.insightlab.linkedgraphast.model.node.{Literal}
 
 object FragmentExpansor {
 
-  private def getSuperclasses(node: Node, schema: LinkedGraph): List[Node] = {
+  def getSuperclasses(node: Node, schema: LinkedGraph): List[Node] = {
 
     schema.getInEdges(node.getId)
       .asScala
