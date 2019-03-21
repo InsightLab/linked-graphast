@@ -20,7 +20,7 @@ object Experiment extends App {
 //      .map(_.source.uri).distinct.mkString("\n"))
 
   val searches = List(
-  "target airports of Air China"
+  "person spouse"
   )
 
 //  val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(s)
@@ -42,7 +42,7 @@ object Experiment extends App {
   for(s <- searches){
 
     val fragment = new VonQBEFragmentExtractor(graph).generateFragment(s)
-    println(fragment.linksAsString())
+//    println(fragment.linksAsString())
 //    val suggestions = FragmentExpansor(graph)(fragment)
 //    println(s"Suggestions to $s:\n${suggestions.mkString(",")}\n")
 
