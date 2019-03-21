@@ -293,7 +293,7 @@ object SchemaSPARQLQueryBuilder {
       block.addTriple(pattern)
     }
 
-    println(URIfilters.mkString("\n"))
+//    println(URIfilters.mkString("\n"))
     for {
       (uri, filters) <- URIfilters
       if isClass(schema.getNodeByURI(uri).asInstanceOf[LinkedNode], schema)
