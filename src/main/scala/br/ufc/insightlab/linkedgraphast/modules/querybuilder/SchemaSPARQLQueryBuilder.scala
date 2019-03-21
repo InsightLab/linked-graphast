@@ -309,6 +309,7 @@ object SchemaSPARQLQueryBuilder {
 
       val pattern = new Triple(s, p, o)
       block.addTriple(pattern)
+      body.addElement(new ElementFilter(new E_IsLiteral(new ExprVar(o))))
 
       //      for(property <- getDataTypeProperties(uri,schema)){
       //        val p = model.createProperty(property).asNode
