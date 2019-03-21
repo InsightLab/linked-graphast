@@ -12,12 +12,7 @@ import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 
 object Experiment extends App {
 
-//  val graph = NTripleParser.parse("src/main/resources/imdb-schema-clean.nt")
   val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
-//  println(
-//    graph.getLinksAsStream
-//        .filter(l => l.uri.uri.contains("#domain") || l.uri.uri.contains("#range"))
-//      .map(_.source.uri).distinct.mkString("\n"))
 
   val searches = List(
   "person spouse"
@@ -50,5 +45,4 @@ object Experiment extends App {
 
     println(s"SPARQL generated to search '$s' : \n\n$query2\n\n")
   }
-
 }
