@@ -146,6 +146,15 @@ object SchemaSPARQLQueryBuilder {
 //    println("Compressed fragment:")
 //    println(graph.linksAsString()+"\n\n")
 
+    graph.getLinksAsStream.foreach{
+      case Attribute(s,_,o) =>
+        if(filtersMap.contains(o.getId)){
+          URIfilters += s.uri -> filtersMap(o.getId)
+        }
+
+      case _ =>
+    }
+
     var domainsMap = Map[String, List[String]]()
     var rangesMap = Map[String, List[String]]()
 
@@ -284,6 +293,7 @@ object SchemaSPARQLQueryBuilder {
       block.addTriple(pattern)
     }
 
+    println(URIfilters.mkString("\n"))
     for {
       (uri, filters) <- URIfilters
       if isClass(schema.getNodeByURI(uri).asInstanceOf[LinkedNode], schema)
