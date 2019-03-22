@@ -25,7 +25,7 @@ class SimilarityKeywordMatcherOptimized (metric: SimilarityMetric, threshold: Do
 
     for{
       literal <- graph.getLiterals
-      cleanLiteral = literal.value.split("\\^\\^<").head.toLowerCase
+      cleanLiteral = literal.value.split("\\^\\^<").head.toLowerCase.split("@").head
       i <- subsequences.indices
       j <- subsequences(i).indices
     }{

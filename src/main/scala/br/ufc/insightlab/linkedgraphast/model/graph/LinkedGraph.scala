@@ -230,4 +230,19 @@ class LinkedGraph(structure: GraphStructure = new DefaultGraphStructure()) exten
   def linksAsString(sep: String = "\n"): String =
     getLinksAsStream.map(_.toString).mkString(sep)
 
+  private def fixLiteralString(literal: String): String = {
+    val lang = "@"+literal.reverse.takeWhile(!_.equals('@')).reverse
+    "\""+literal.replace(lang,"")+"\""+lang
+  }
+
+  def toNTriple: String =
+    getLinksAsStream
+    .map{
+      case Attribute(s,p,o) =>
+        s"<${s.uri}> <${p.uri}> ${fixLiteralString(o.value)} ."
+      case Relation(s,p,o) =>
+        s"<${s.uri}> <${p.uri}> <${o.uri}> ."
+    }
+    .mkString("\n")
+
 }

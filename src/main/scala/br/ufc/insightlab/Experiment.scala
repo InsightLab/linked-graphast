@@ -1,6 +1,7 @@
 package br.ufc.insightlab
 
-import br.ufc.insightlab.linkedgraphast.modules.figer.Figer
+import br.ufc.insightlab.linkedgraphast.modules.NER.figer.Figer
+import br.ufc.insightlab.linkedgraphast.modules.NER.wikifier.Wikifier
 import br.ufc.insightlab.linkedgraphast.modules.fragmentexpansor.FragmentExpansor
 import br.ufc.insightlab.linkedgraphast.modules.fragmentextractor.FragmentExtractor
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.{SimilarityKeywordMatcherOptimized, SimilarityKeywordMatcherOptimizedWithFilters}
@@ -12,15 +13,10 @@ import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 
 object Experiment extends App {
 
-//  val graph = NTripleParser.parse("src/main/resources/imdb-schema-clean.nt")
   val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
-//  println(
-//    graph.getLinksAsStream
-//        .filter(l => l.uri.uri.contains("#domain") || l.uri.uri.contains("#range"))
-//      .map(_.source.uri).distinct.mkString("\n"))
 
   val searches = List(
-  "target airports of Air China"
+  "Barack Obama spouse"
   )
 
 //  val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(s)
@@ -35,20 +31,20 @@ object Experiment extends App {
 //  val query1 = SchemaSPARQLQueryBuilder(fragment,filters,graph)
 //
 //  println("\n"+query1)
-  val useNer = false
-  if(useNer)
-    Figer.init("src/main/resources/figer.conf")
+  val useNer = true
+  val ner = Wikifier
+//  if(useNer)
+//    Figer.init("src/main/resources/figer.conf")
 
   for(s <- searches){
 
     val fragment = new VonQBEFragmentExtractor(graph).generateFragment(s)
-    println(fragment.linksAsString())
+//    println(fragment.linksAsString())
 //    val suggestions = FragmentExpansor(graph)(fragment)
 //    println(s"Suggestions to $s:\n${suggestions.mkString(",")}\n")
 
-    val query2 = new VonQBESparqlBuilder(graph, useNer).generateSPARQL(s, useNer)
+    val query2 = new VonQBESparqlBuilder(graph, ner).generateSPARQL(s, useNer)
 
     println(s"SPARQL generated to search '$s' : \n\n$query2\n\n")
   }
-
 }

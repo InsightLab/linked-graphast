@@ -48,21 +48,21 @@ object SchemaSPARQLQueryBuilder {
     val body = new ElementGroup()
 
     g.getNodes.iterator.next match {
-    case literal: Literal =>
-      val nodes = schema.getInEdges(literal.getId).asScala
-        .map(_.asInstanceOf[Link])
-        .filter(l => l.uri.uri.endsWith("#label") && l.target==literal)
-        .map(_.source).toStream
-        .filter(isClass(_,schema))
+      case literal: Literal =>
+        val nodes = schema.getInEdges(literal.getId).asScala
+          .map(_.asInstanceOf[Link])
+          .filter(l => l.uri.uri.endsWith("#label") && l.target == literal)
+          .map(_.source).toStream
+          .filter(isClass(_, schema))
 
-        if(nodes.nonEmpty){
+        if (nodes.nonEmpty) {
           val node = nodes.head
 
-          if(isClass(node,schema)){
+          if (isClass(node, schema)) {
             val s = getVar(node.uri, block)
             query.addResultVar(s)
 
-            if(filtersMap.getOrElse(literal.getId, List()).nonEmpty){
+            if (filtersMap.getOrElse(literal.getId, List()).nonEmpty) {
               query.addResultVar(s)
 
               val o = getVar(s.getVarName + "_value")
@@ -83,9 +83,9 @@ object SchemaSPARQLQueryBuilder {
               //        body.addElement(new ElementOptional(optBlock))
               //      }
 
-              for{
+              for {
                 f <- filtersMap.getOrElse(literal.getId, List())
-              }{
+              } {
                 val filterElement = generateStringFilter(o, f)
                 if (filterElement.isDefined)
                   body.addElement(filterElement.get)
@@ -94,7 +94,7 @@ object SchemaSPARQLQueryBuilder {
 
 
           }
-          else if(isDataTypeProperty(node.value,schema)){
+          else if (isDataTypeProperty(node.value, schema)) {
             val s = getVar("xpto")
             query.addResultVar(s)
 
@@ -119,9 +119,9 @@ object SchemaSPARQLQueryBuilder {
     }
 
     body.addElement(block)
-//    query.setQueryPattern(body)
-//
-//    query.toString
+    //    query.setQueryPattern(body)
+    //
+    //    query.toString
 
     body
   }
@@ -132,6 +132,7 @@ object SchemaSPARQLQueryBuilder {
       .map(_.asInstanceOf[Link])
       .exists(l => l.uri.uri.endsWith("#type") && l.target.value.endsWith("#Class"))
   }
+
   private[querybuilder] def processMultipleElements(g: LinkedGraph, filtersMap: Map[Long, List[String]] = Map.empty, schema: LinkedGraph, query: Query): ElementGroup = {
 
 
@@ -142,80 +143,101 @@ object SchemaSPARQLQueryBuilder {
 
     val graph = compressSubclasses(g, filtersMap)
 
-    //    println("Compressed fragment:")
-    //    println(graph.linksAsString())
+//    println("Compressed fragment:")
+//    println(graph.linksAsString()+"\n\n")
+
+    graph.getLinksAsStream.foreach{
+      case Attribute(s,_,o) =>
+        if(filtersMap.contains(o.getId)){
+          URIfilters += s.uri -> filtersMap(o.getId)
+        }
+
+      case _ =>
+    }
 
     var domainsMap = Map[String, List[String]]()
-    var rangesMap = Map[String, String]()
+    var rangesMap = Map[String, List[String]]()
 
-    graph
-      .getLinksAsStream.toList
-      .filterNot(l => {
-        if (l.isInstanceOf[Attribute]) {
-          if (filtersMap.contains(l.target.getId)) {
-            URIfilters += l.source.uri -> filtersMap(l.target.getId)
+    val properties = graph.getLinksAsStream.filter {
+      case Relation(s, p, o) => p.uri.endsWith("#domain") || p.uri.endsWith("#range")
+      case _ => false
+    }.map { case Relation(s, p, o) => (s.uri, p.uri, o.uri) }
+      .groupBy(_._1)
+      .map { case (p, ls) => p -> ls.map(x => (x._2, x._3)).groupBy(_._1) }
+    //    println(properties.mkString("\n")+"\n")
 
+    if (properties.nonEmpty) {
+      val schemaTriples: List[Relation] = properties.toList.flatMap { case (p, ls) => {
+        val domainURI: Option[String] =
+          Try(ls.keySet.filter(_.endsWith("#domain")).head) match {
+            case Success(s) => Some(s)
+            case _ => None
           }
-          true
+
+        val rangeURI: Option[String] = Try(ls.keySet.filter(_.endsWith("#range")).head) match {
+          case Success(s) => Some(s)
+          case _ => None
         }
-        else l.uri.uri.endsWith("#type")
-      })
-      //      .foreach(println)
-      .foreach(l => {
-//        println(l)
-      if (l.uri.uri.contains("#domain")) {
-        if (rangesMap.contains(l.source.uri)) {
-          val s = getVar(l.target.value, block)
-          query.addResultVar(s)
 
-          val p = model.createProperty(l.source.uri).asNode
+        if (domainURI.isDefined) {
+          if (rangeURI.isDefined) {
+            val domains = ls(domainURI.get).map(_._2)
+            val ranges = ls(rangeURI.get).map(_._2)
 
-          val o = getVar(rangesMap(l.source.uri), block)
-          query.addResultVar(o)
-
-          val pattern = new Triple(s, p, o)
-          block.addTriple(pattern)
-        }
-        else
-
-          domainsMap += l.source.uri -> (domainsMap.getOrElse(l.source.uri, List[String]()) ::: List[String](l.target.value))
-
-      }
-      else if (l.uri.uri.contains("#range")) {
-        if (domainsMap.contains(l.source.uri)) {
-          for (d <- domainsMap(l.source.uri)) {
-            val s = getVar(d, block)
-            query.addResultVar(s)
-
-            val p = model.createProperty(l.source.uri).asNode
-
-            val o = getVar(l.target.value, block)
-            query.addResultVar(o)
-
-            val pattern = new Triple(s, p, o)
-            block.addTriple(pattern)
-
-            domainsMap -= l.source.uri
+            for {
+              d <- domains
+              r <- ranges
+              if r != d
+            } yield Relation(URI(d), URI(p), URI(r))
+          }
+          else {
+            domainsMap += p -> domainsMap.getOrElse(p, Nil).union(ls(domainURI.get).map(_._2))
+            Nil
           }
         }
-        else
-          rangesMap += l.source.uri -> l.target.value
+        else {
+          if (rangeURI.isDefined) {
+            rangesMap += p -> rangesMap.getOrElse(p, Nil).union(ls(rangeURI.get).map(_._2))
+          }
+          Nil
+        }
       }
-    })
+
+      }
+
+      for (triple <- schemaTriples) {
+        val s = getVar(triple.source.uri, block)
+        query.addResultVar(s)
+
+        val p = model.createProperty(triple.uri.uri).asNode
+
+        val o = getVar(triple.target.value, block)
+        query.addResultVar(o)
+
+        val pattern = new Triple(s, p, o)
+        block.addTriple(pattern)
+      }
+    }
+
+//    println(rangesMap)
+//    println(domainsMap)
 
     for {
-      (property,range) <- rangesMap
+      (property, rangeList) <- rangesMap
     } {
       val s = getVar(property)
       query.addResultVar(s)
 
       val p = model.createProperty(property).asNode
 
-      val o = getVar(range, block)
-      query.addResultVar(o)
+      for(range <- rangeList){
+        val o = getVar(range, block)
+        query.addResultVar(o)
 
-      val pattern = new Triple(s, p, o)
-      block.addTriple(pattern)
+        val pattern = new Triple(s, p, o)
+        block.addTriple(pattern)
+      }
+
     }
 
     for {
@@ -249,16 +271,16 @@ object SchemaSPARQLQueryBuilder {
       if !isDataTypeProperty(property, schema)
       subject <- subjects
       range <- getRanges(property, schema)
-//      if hasVar(range)
+      //      if hasVar(range)
     } {
       val s = getVar(subject, block)
       query.addResultVar(s)
 
       val p = model.createProperty(property).asNode
 
-//      print((range,subject))
-      val o = if(range == subject){
-        val o = getVar(range+"_2")
+      //      print((range,subject))
+      val o = if (range == subject) {
+        val o = getVar(range + "_2")
         query.addResultVar(o)
         o
       } else {
@@ -271,7 +293,8 @@ object SchemaSPARQLQueryBuilder {
       block.addTriple(pattern)
     }
 
-    for{
+//    println(URIfilters.mkString("\n"))
+    for {
       (uri, filters) <- URIfilters
       if isClass(schema.getNodeByURI(uri).asInstanceOf[LinkedNode], schema)
     } {
@@ -286,15 +309,16 @@ object SchemaSPARQLQueryBuilder {
 
       val pattern = new Triple(s, p, o)
       block.addTriple(pattern)
+      body.addElement(new ElementFilter(new E_IsLiteral(new ExprVar(o))))
 
-//      for(property <- getDataTypeProperties(uri,schema)){
-//        val p = model.createProperty(property).asNode
-//
-//        val pattern = new Triple(s, p, o)
-//        val optBlock = new ElementTriplesBlock()
-//        optBlock.addTriple(pattern)
-//        body.addElement(new ElementOptional(optBlock))
-//      }
+      //      for(property <- getDataTypeProperties(uri,schema)){
+      //        val p = model.createProperty(property).asNode
+      //
+      //        val pattern = new Triple(s, p, o)
+      //        val optBlock = new ElementTriplesBlock()
+      //        optBlock.addTriple(pattern)
+      //        body.addElement(new ElementOptional(optBlock))
+      //      }
 
       for (f <- filters) {
         val filterElement = generateStringFilter(o, f)
@@ -304,9 +328,9 @@ object SchemaSPARQLQueryBuilder {
     }
 
     body.addElement(block)
-//    query.setQueryPattern(body)
-//
-//    query.toString
+    //    query.setQueryPattern(body)
+    //
+    //    query.toString
 
     body
   }
@@ -317,10 +341,10 @@ object SchemaSPARQLQueryBuilder {
     val query = QueryFactory.make()
     query.setQuerySelectType()
 
-    val body = if(g.getNumberOfNodes == 1){
+    val body = if (g.getNumberOfNodes == 1) {
       processSingleElement(g, filtersMap, schema, query)
     }
-    else{
+    else {
       processMultipleElements(g, filtersMap, schema, query)
     }
 
@@ -331,18 +355,18 @@ object SchemaSPARQLQueryBuilder {
   private[querybuilder] def getDataTypeProperties(uri: String, schema: LinkedGraph): Seq[String] = {
     schema.getInEdges(LinkedNodeHelper.getNodeIdByURI(uri))
       .asScala
-      .flatMap{
+      .flatMap {
         case l: Link =>
-          if(l.uri.uri.contains("#domain") && l.target.value == uri)
-          List[String](l.source.uri)
-          else if(l.uri.uri.contains("subClassOf") && l.source.uri == uri) {
-//            println(s"$uri is subclass of ${l.target.value}")
+          if (l.uri.uri.contains("#domain") && l.target.value == uri)
+            List[String](l.source.uri)
+          else if (l.uri.uri.contains("subClassOf") && l.source.uri == uri) {
+            //            println(s"$uri is subclass of ${l.target.value}")
             getDataTypeProperties(l.target.value, schema)
           }
           else Nil
         case _ => Nil
       }
-      .filter(isDataTypeProperty(_,schema))
+      .filter(isDataTypeProperty(_, schema))
       .toList
 
   }
@@ -419,24 +443,24 @@ object SchemaSPARQLQueryBuilder {
         .toLowerCase
 
       val value: Expr =
-        if(typeURI.contains("#int"))
-        Try(stringValue.toInt) match {
-          case Success(i) => new NodeValueString(stringValue,model.createTypedLiteral(i,typeURI).asNode())
-          case Failure(_) =>
-            log.warn(s"Bad formatted value $stringValue to type $typeURI. Creating string filter")
-            null
-        }
-        else if(typeURI.endsWith("#decimal") || typeURI.endsWith("#double"))
-        Try(stringValue.toDouble) match {
-          case Success(i) => new NodeValueString(stringValue,model.createTypedLiteral(i,typeURI).asNode())
-          case Failure(_) =>
-            log.warn(s"Bad formatted value $stringValue to type $typeURI. Creating string filter")
-            null
-        }
+        if (typeURI.contains("#int"))
+          Try(stringValue.toInt) match {
+            case Success(i) => new NodeValueString(stringValue, model.createTypedLiteral(i, typeURI).asNode())
+            case Failure(_) =>
+              log.warn(s"Bad formatted value $stringValue to type $typeURI. Creating string filter")
+              null
+          }
+        else if (typeURI.endsWith("#decimal") || typeURI.endsWith("#double"))
+          Try(stringValue.toDouble) match {
+            case Success(i) => new NodeValueString(stringValue, model.createTypedLiteral(i, typeURI).asNode())
+            case Failure(_) =>
+              log.warn(s"Bad formatted value $stringValue to type $typeURI. Creating string filter")
+              null
+          }
         else
           null
 
-      if(null == value) generateStringFilter(v,filter)
+      if (null == value) generateStringFilter(v, filter)
       else
         operation.toLowerCase match {
 
@@ -462,21 +486,21 @@ object SchemaSPARQLQueryBuilder {
             None
         }
 
-      }
-      catch {
-        case e: Exception =>
-          log.error(e.getMessage)
-          log.warn(s"Bad formated filter: $filter. Filters must be like [operation;value]")
-          None
-      }
+    }
+    catch {
+      case e: Exception =>
+        log.error(e.getMessage)
+        log.warn(s"Bad formated filter: $filter. Filters must be like [operation;value]")
+        None
+    }
   }
 
   private[querybuilder] def generateFilter(uri: String, v: Var, filter: String, schema: LinkedGraph): Option[ElementFilter] = {
     val ranges = getRanges(uri, schema)
-    if(ranges.exists(r => r.contains("#int") || r.endsWith("#decimal") || r.endsWith("#double")))
-      generateNumberFilter(v,filter, ranges.head)
+    if (ranges.exists(r => r.contains("#int") || r.endsWith("#decimal") || r.endsWith("#double")))
+      generateNumberFilter(v, filter, ranges.head)
     else
-      generateStringFilter(v,filter)
+      generateStringFilter(v, filter)
   }
 
   def compressSubclasses(graph: LinkedGraph, filtersMap: Map[Long, List[String]]): LinkedGraph = {
