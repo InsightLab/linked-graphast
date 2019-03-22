@@ -2,7 +2,10 @@ package br.ufc.insightlab.linkedgraphast.modules.NER.wikifier
 
 import br.ufc.insightlab.linkedgraphast.modules.NER.NERClassifier
 import play.api.libs.json.{JsArray, JsObject, Json}
-import scalaj.http.Http
+import scalaj.http.{Http, HttpRequest}
+
+import scala.annotation.tailrec
+import scala.util.{Success, Try}
 
 object Wikifier extends NERClassifier{
 
@@ -10,12 +13,18 @@ object Wikifier extends NERClassifier{
 
   private case class Annotation(text: String, types: List[String], pageRank: Double)
 
+  @tailrec
+  private def retryRequest(req: HttpRequest): String =
+    Try(req.asString.body) match {
+      case Success(s) => s
+      case _ => retryRequest(req)
+    }
+
   def classify(text: String): List[(String, List[String])] = {
-    val response: String = Http("http://www.wikifier.org/annotate-article")
-      .param("userKey",wikifierToken)
-      .param("text", text)
-      .asString
-      .body
+    val response: String =
+      retryRequest(Http("http://www.wikifier.org/annotate-article")
+        .param("userKey",wikifierToken)
+        .param("text", text))
 
 //    println(response)
 
