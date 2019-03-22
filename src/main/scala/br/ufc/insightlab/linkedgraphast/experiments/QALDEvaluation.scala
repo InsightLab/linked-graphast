@@ -6,7 +6,8 @@ import java.io.{File, PrintWriter}
 import br.ufc.insightlab.linkedgraphast.experiments.IMDBEvaluation.logger
 import br.ufc.insightlab.linkedgraphast.experiments.helper.VirtuosoHelper
 import br.ufc.insightlab.linkedgraphast.metrics.{Precision, Recall}
-import br.ufc.insightlab.linkedgraphast.modules.figer.Figer
+import br.ufc.insightlab.linkedgraphast.modules.NER.figer.Figer
+import br.ufc.insightlab.linkedgraphast.modules.NER.wikifier.Wikifier
 import br.ufc.insightlab.linkedgraphast.modules.vonqbe.VonQBESparqlBuilder
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import org.apache.commons.io.FileUtils
@@ -52,7 +53,7 @@ object QALDEvaluation{
 
   def runExperiments(generateSPARQL: Boolean, generateResults: Boolean, computeMetrics: Boolean): Unit = {
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
-    val QB = new VonQBESparqlBuilder(graph)
+    val QB = new VonQBESparqlBuilder(graph, Wikifier)
     if(generateSPARQL){
       Figer.init("src/main/resources/figer.conf")
     }
@@ -136,7 +137,7 @@ object QALDEvaluation{
   }
 
   def main(args: Array[String]): Unit = {
-    val metrics = true
+    val metrics = false
     runExperiments(!metrics, !metrics, metrics)
   }
 

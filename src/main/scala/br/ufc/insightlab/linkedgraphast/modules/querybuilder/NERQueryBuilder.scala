@@ -1,14 +1,15 @@
 package br.ufc.insightlab.linkedgraphast.modules.querybuilder
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
-import br.ufc.insightlab.linkedgraphast.modules.figer.Figer
+import br.ufc.insightlab.linkedgraphast.modules.NER.NERClassifier
+import br.ufc.insightlab.linkedgraphast.modules.NER.figer.Figer
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.SimilarityMetric
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 import org.slf4j.LoggerFactory
 
 
-class NERQueryBuilder(metric: SimilarityMetric, threshold: Double = 0.9) {
+class NERQueryBuilder(nerClassifier: NERClassifier, metric: SimilarityMetric, threshold: Double = 0.9) {
   require(threshold <= 1.0)
   require(threshold >= 0.0)
 
@@ -46,7 +47,7 @@ class NERQueryBuilder(metric: SimilarityMetric, threshold: Double = 0.9) {
     val capText = filterPattern.replaceAllIn(text.split(" ").map(_.capitalize).mkString(" "),"")
     logger.debug(s"Classifying entities for text: $capText")
 
-    val entities = Figer.classify(capText)
+    val entities = nerClassifier.classify(capText)
     logger.debug(s"\n${entities.size} entities found:\n${entities.mkString(" ")}")
 
     val textsCandidates = generateCombinations(capText, entities)

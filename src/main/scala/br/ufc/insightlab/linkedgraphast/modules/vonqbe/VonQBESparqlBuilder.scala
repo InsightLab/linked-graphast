@@ -1,26 +1,25 @@
 package br.ufc.insightlab.linkedgraphast.modules.vonqbe
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
+import br.ufc.insightlab.linkedgraphast.modules.NER.NERClassifier
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.{JaroWinkler, PermutedSimilarity}
 import br.ufc.insightlab.linkedgraphast.modules.querybuilder.{MultipleSchemaSPARQLQueryBuilder, NERQueryBuilder, SchemaSPARQLQueryBuilder}
 import br.ufc.insightlab.linkedgraphast.query.steinertree.SteinerTree
 
-class VonQBESparqlBuilder(graph: LinkedGraph, initNER: Boolean = false) {
+class VonQBESparqlBuilder(graph: LinkedGraph, nerClassifier: Option[NERClassifier] = None) {
 
-  private var ner: Option[NERQueryBuilder] =
-    if(initNER)
-      Some(new NERQueryBuilder(new PermutedSimilarity(JaroWinkler)))
+  def this(graph: LinkedGraph, nerClassifier: NERClassifier) =
+    this(graph, Some(nerClassifier))
+
+  private val ner: Option[NERQueryBuilder] =
+    if(nerClassifier.isDefined)
+      Some(new NERQueryBuilder(nerClassifier.get, new PermutedSimilarity(JaroWinkler)))
     else None
 
   def generateSPARQL(text: String, withNER: Boolean = false): String = {
 
-    if(withNER)
-      if(ner.isDefined) ner.get(graph)(text)
-      else {
-        ner = Some(new NERQueryBuilder(new PermutedSimilarity(JaroWinkler)))
-        ner.get(graph)(text)
-      }
+    if(withNER && ner.isDefined) ner.get(graph)(text)
     else{
       val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(text)
 

@@ -1,5 +1,6 @@
-package br.ufc.insightlab.linkedgraphast.modules.figer
+package br.ufc.insightlab.linkedgraphast.modules.NER.figer
 
+import br.ufc.insightlab.linkedgraphast.modules.NER.NERClassifier
 import edu.stanford.nlp.ling.CoreAnnotations.{SentencesAnnotation, TokensAnnotation}
 import edu.stanford.nlp.ling.CoreLabel
 import edu.stanford.nlp.pipeline.Annotation
@@ -9,7 +10,7 @@ import edu.washington.cs.figer.analysis.Preprocessing
 
 import scala.collection.JavaConverters._
 
-object Figer {
+object Figer extends NERClassifier {
 
   private var initialized: Boolean = false
   var configFile: String = _
