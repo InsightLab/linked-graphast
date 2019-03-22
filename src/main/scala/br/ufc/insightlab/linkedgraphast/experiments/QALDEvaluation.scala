@@ -41,7 +41,7 @@ object QALDEvaluation{
 
   val basePath = "src/evaluation/resources/QALD"
 
-  val string = Source.fromFile("src/evaluation/resources/QALD-5.json").getLines.mkString("\n")
+  val string = Source.fromFile("src/evaluation/resources/QALD-9.json").getLines.mkString("\n")
 
   val data = Json.parse(string)
     .as[JsArray]
@@ -54,16 +54,16 @@ object QALDEvaluation{
   def runExperiments(generateSPARQL: Boolean, generateResults: Boolean, computeMetrics: Boolean): Unit = {
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
     val QB = new VonQBESparqlBuilder(graph, Wikifier)
-    if(generateSPARQL){
-      Figer.init("src/main/resources/figer.conf")
-    }
-
-//    if(generateResults){
-//      new File(basePath)
-//        .listFiles()
-//        .filter(_.isDirectory)
-//        .foreach(FileUtils.deleteDirectory)
+//    if(generateSPARQL){
+//      Figer.init("src/main/resources/figer.conf")
 //    }
+
+    if(generateResults && generateSPARQL){
+      new File(basePath)
+        .listFiles()
+        .filter(_.isDirectory)
+        .foreach(FileUtils.deleteDirectory)
+    }
 
     val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
       logger.info(s"Processing query ${q.id}: ${q.text}")
