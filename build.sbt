@@ -1,6 +1,6 @@
 organization := "br.ufc.insightlab"
 name := "linked-graphast"
-version := "1.1.3"
+version := "1.1.4"
 
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 publishConfiguration := publishConfiguration.value.withOverwrite(true)
