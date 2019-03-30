@@ -2,6 +2,7 @@ package br.ufc.insightlab.linkedgraphast.modules.vonqbe
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.modules.NER.NERClassifier
+import br.ufc.insightlab.linkedgraphast.modules.NER.wikifier.Wikifier
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.SimilarityKeywordMatcherOptimizedWithFilters
 import br.ufc.insightlab.linkedgraphast.modules.keywordmatcher.similarity.{JaroWinkler, PermutedSimilarity}
 import br.ufc.insightlab.linkedgraphast.modules.querybuilder.{MultipleSchemaSPARQLQueryBuilder, NERQueryBuilder, SchemaSPARQLQueryBuilder}
@@ -11,6 +12,9 @@ class VonQBESparqlBuilder(graph: LinkedGraph, nerClassifier: Option[NERClassifie
 
   def this(graph: LinkedGraph, nerClassifier: NERClassifier) =
     this(graph, Some(nerClassifier))
+
+  def this(graph: LinkedGraph) =
+    this(graph, Some(Wikifier))
 
   private val ner: Option[NERQueryBuilder] =
     if(nerClassifier.isDefined)
