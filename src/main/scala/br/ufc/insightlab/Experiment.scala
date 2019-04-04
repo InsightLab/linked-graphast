@@ -16,7 +16,7 @@ object Experiment extends App {
   val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
 
   val searches = List(
-  "Barack Obama spouse"
+  "Which pope succeeded John Paul II?"
   )
 
 //  val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(s)
