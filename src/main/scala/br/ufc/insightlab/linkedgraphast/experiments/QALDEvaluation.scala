@@ -54,9 +54,13 @@ object QALDEvaluation{
   def runExperiments(generateSPARQL: Boolean, generateResults: Boolean, computeMetrics: Boolean): Unit = {
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
     val QB = new VonQBESparqlBuilder(graph, Wikifier)
-//    if(generateSPARQL){
-//      Figer.init("src/main/resources/figer.conf")
-//    }
+
+    if(generateResults){
+      new File(basePath)
+        .listFiles()
+        .filter(_.isDirectory)
+        .foreach(FileUtils.deleteDirectory)
+    }
 
     if(generateResults && generateSPARQL){
       new File(basePath)
@@ -66,7 +70,8 @@ object QALDEvaluation{
     }
 
     val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
-      logger.info(s"Processing query ${q.id}: ${q.text}")
+      if(!computeMetrics) logger.info(s"Processing query ${q.id}: ${q.text}")
+
       val path = basePath+"/question"+q.id
 
       FileUtils.forceMkdir(new File(path))
@@ -107,9 +112,9 @@ object QALDEvaluation{
           s"$path/generated-results-ner.tsv")
 
         if(recall > 0 || precision > 0 || recallNER > 0 || precisionNER > 0){
-          logger.debug(s"query ${q.id}: ${q.text}")
-          logger.debug(s"Recall value without NER: $recall | Precision value without NER: $precision")
-          logger.debug(s"Recall value with NER: $recall | Precision value with NER: $precision")
+          logger.info(s"query ${q.id}: ${q.text}")
+          logger.info(s"Recall value without NER: $recall | Precision value without NER: $precision")
+          logger.info(s"Recall value with NER: $recall | Precision value with NER: $precision")
         }
         ((recall, precision), (recallNER, precisionNER))
       } else ((0.0,0.0), (0.0,0.0))
@@ -120,24 +125,24 @@ object QALDEvaluation{
       println("\n------------------------------------------\n")
       logger.info(s"Processed queries: ${metrics.size}")
       val nonZero: Double = metrics.count(x => x._1._1 > 0 || x._1._2 > 0 || x._2._1 > 0 || x._2._2 > 0)
-      println(s"$nonZero non-zero results!")
+      logger.info(s"$nonZero non-zero results")
       val sums: ((Double, Double), (Double, Double)) = metrics.foldLeft((0.0,0.0), (0.0,0.0))((acc, t) => (((acc._1)._1 + t._1._1 , (acc._1)._2 + t._1._2), ((acc._2)._1 + t._2._1 , (acc._2)._2 + t._2._2)))
 
       val meanRecall = (sums._1)._1 / metrics.size
       val meanPrecision = (sums._1)._2 / metrics.size
-      logger.info(s"Mean recall without NER: $meanRecall | Mean precision without NER: $meanPrecision")
+//      logger.info(s"Mean recall without NER: $meanRecall | Mean precision without NER: $meanPrecision")
       logger.info(s"Mean non-zero recall without NER: ${(sums._1)._1/nonZero} | Mean non-zero precision without NER: ${(sums._1)._2/nonZero}")
 
       val meanRecallNER = (sums._2)._1 / metrics.size
       val meanPrecisionNER = (sums._2)._2 / metrics.size
-      logger.info(s"Mean recall with NER: $meanRecallNER | Mean precision with NER: $meanPrecisionNER")
+//      logger.info(s"Mean recall with NER: $meanRecallNER | Mean precision with NER: $meanPrecisionNER")
       logger.info(s"Mean non-zero recall with NER: ${(sums._2)._1/nonZero} | Mean non-zero precision with NER: ${(sums._2)._2/nonZero}")
     }
 
   }
 
   def main(args: Array[String]): Unit = {
-    val metrics = false
+    val metrics = true
     runExperiments(!metrics, !metrics, metrics)
   }
 
