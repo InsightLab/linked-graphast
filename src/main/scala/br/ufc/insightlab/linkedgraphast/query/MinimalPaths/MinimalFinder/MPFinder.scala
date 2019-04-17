@@ -1,27 +1,35 @@
 package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
-import java.lang
-import java.nio.file.Paths
 import scala.collection.JavaConverters._
 import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
-import javafx.scene.Parent
-import nu.xom.Nodes
+import br.ufc.insightlab.graphast.structure.DefaultGraphStructure
 
 object MPFinder {
 
-  def insert(parents: Map[Long, Set[Long]] ,distances: Map[Long , Double] ,dad:Long , son:Long, widget:Double ) : Map[Long , Set[Long]] ={
-    if(distances(son) == widget){
-      parents(son) += dad
-    }
-    if(widget<distances(son)){
-      parents(son).empty
-      parents(son) += dad
-    }
+  private def buildPath(source: Long , target: Long , parents: Map[Long, Set[Long]]) : List[List[Long]]={
+    if(source == target ){
+      source :: Nil
 
-    parents
+    }else{
+      println(target)
+      var track:List[List[Long]] = List(List())
+      /*
+      for{
+        dad <- parents(target)
+
+        path <- buildPath(source,dad,parents)
+      }yield{
+        path
+
+      }
+
+       */
+      for(dad <- parents(target)) yield{
+        dad :: List( buildPath(source,dad,parents) )
+      }
+    }
   }
-
-  def apply(G: Graph , source: Long , target: Long) :List[Paths] ={
+  def apply(G: Graph , source: Long , target: Long) :List[List[Long]] ={
 
     var parents: Map[Long, Set[Long]] = Map()
     var nodes : Iterable[Node] = G.getNodes.asScala
@@ -32,13 +40,13 @@ object MPFinder {
     for(u<-nodes){
       colors += (u.getId -> false)
       distances += (u.getId-> Double.PositiveInfinity)
-      parents += (u.getId -> List)
+      parents += (u.getId -> Set())
     }
 
-    colors(source) = true
-    distances(source) = 0
+    colors += source -> true
+    distances += (source -> 0)
 
-    var NextNodesId:List[Long] = List(source)
+    var NextNodesId:Set[Long] = Set(source)
 
     while( NextNodesId.nonEmpty){
 
@@ -47,28 +55,45 @@ object MPFinder {
 
       for{
         edge <- G.getOutEdges(dad).asScala
-        fromNodeId:Long = edge.getFromNodeId
+        fromNodeId:Long = edge.getToNodeId
       }{
+
         if(!colors(fromNodeId)){
 
-          val widget: Double = distances(dad) + edge.getWeight()
+          val widget: Double = distances(dad) + edge.getWeight
           if(widget <= distances(fromNodeId)){
 
             if (fromNodeId != target){
-              NextNodesId :+ fromNodeId
+
+              NextNodesId += fromNodeId
+
             }
 
-            parents = insert(parents,distances, dad ,fromNodeId , widget)
-            distances(fromNodeId) = widget
+            parents += fromNodeId -> (parents.getOrElse(fromNodeId, Set()) + dad)
+            distances += fromNodeId-> widget
 
           }
         }
       }
-      colors(dad) = true
+      colors += dad -> true
     }
 
+    buildPath(source,target,parents)
 
   }
 
+  def main(args: Array[String]): Unit = {
+    val G:Graph = new Graph(new DefaultGraphStructure)
+    G.addNodes(0l,1l,2l,3l,4l,5l,6l)
+    for(i <- 0l to 3l){
+      G.addEdge(new Edge(i,i+1))
+    }
 
+    G.addEdge(new Edge(1l,6l))
+    G.addEdge(new Edge(6l,5l))
+    G.addEdge(new Edge(5l,4l))
+    println(MPFinder(G,0l,4l))
+
+  }
 }
+
