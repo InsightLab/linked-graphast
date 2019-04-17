@@ -6,26 +6,20 @@ import br.ufc.insightlab.graphast.structure.DefaultGraphStructure
 
 object MPFinder {
 
-  private def buildPath(source: Long , target: Long , parents: Map[Long, Set[Long]]) : List[List[Long]]={
-    if(source == target ){
-      source :: Nil
-
-    }else{
-      println(target)
-      var track:List[List[Long]] = List(List())
-      /*
-      for{
-        dad <- parents(target)
-
-        path <- buildPath(source,dad,parents)
-      }yield{
-        path
-
-      }
-
-       */
-      for(dad <- parents(target)) yield{
-        dad :: List( buildPath(source,dad,parents) )
+  private def buildPath(source: Long, target: Long, parents: Map[Long, Set[Long]]) : List[List[Long]]= {
+    println(s"buildPath($source, $target, ${parents(target)})")
+    if (source == target) {
+      Nil
+    } else {
+//      val result = for {
+//        dad <- parents(target).toList
+//        path <- buildPath(source, dad, parents)
+//      } yield dad :: path
+//      println(s"result: $result")
+//      result
+      parents(target).toList.map { dad =>
+        val paths = buildPath(source, dad, parents)
+        paths.flatMap(path => dad :: path)
       }
     }
   }
