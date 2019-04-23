@@ -1,7 +1,7 @@
 package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
 import scala.collection.JavaConverters._
-import br.ufc.insightlab.graphast.model.{Graph, Node}
+import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
 
 object MPFinder extends MinimalPathsFinder {
 
@@ -18,6 +18,8 @@ object MPFinder extends MinimalPathsFinder {
       }
     }
   }
+
+
 
   def apply(G: Graph, source: Long, target: Long): List[List[Long]] = {
 
@@ -40,29 +42,42 @@ object MPFinder extends MinimalPathsFinder {
 
     while (NextNodesId.nonEmpty) {
 
-      val dad: Long = NextNodesId.last
-      NextNodesId = NextNodesId.init
+      val dad: Long = NextNodesId.head
+      NextNodesId = NextNodesId - NextNodesId.head
 
       for {
         edge <- G.getOutEdges(dad).asScala
+
         fromNodeId: Long = edge.getToNodeId
       } {
 
         if (!colors(fromNodeId)) {
 
           val widget: Double = distances(dad) + edge.getWeight
+
           if (widget <= distances(fromNodeId)) {
 
             if (fromNodeId != target) {
 
               NextNodesId += fromNodeId
 
+
             }
 
-            parents += fromNodeId -> (parents.getOrElse(fromNodeId, Set()) + dad)
-            distances += fromNodeId -> widget
+            if(distances(fromNodeId) == widget){
+
+
+              parents += fromNodeId -> (parents(fromNodeId)+dad)
+
+            }else{
+
+              parents += fromNodeId -> Set(dad)
+
+              distances += fromNodeId -> widget
+            }
 
           }
+
         }
       }
       colors += dad -> true
@@ -72,4 +87,6 @@ object MPFinder extends MinimalPathsFinder {
 
   }
 
+
 }
+
