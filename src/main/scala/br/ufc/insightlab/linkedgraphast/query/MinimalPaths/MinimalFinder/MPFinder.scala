@@ -5,23 +5,46 @@ import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
 
 object MPFinder extends MinimalPathsFinder {
 
-  private def buildPath(source: Long, target: Long, parents: Map[Long, Set[Long]]): List[List[Long]] = {
+  private def buildPathNodes(source: Long, target: Long, parents: Map[Long, Set[Long]]): List[List[Long]] = {
 
     if (source == target) {
       List(List(source))
     } else {
 
       parents(target).toList.flatMap { dad =>
-        val paths: List[List[Long]] = buildPath(source, dad, parents)
+        val paths: List[List[Long]] = buildPathNodes(source, dad, parents)
         paths.map((path: List[Long]) => path :+ target)
 
       }
     }
   }
 
+  private def buildPathEdges(pathNodes : List[List[Long]] , G : Graph) : List[List[Edge]] = {
+    var pathEdges : List[List[Edge]]=  List()
+
+    for(path <- pathNodes){
+
+      var track : List[Edge] = List()
+
+      for(node <- 0 to path.length-2){
+        val fromNode : Int = node + 1
+
+        var candidates : List[Edge] = G.getOutEdges(path(node)).asScala.toList.filter(_.getToNodeId == path(fromNode))
+        val widget :Double = candidates.minBy(_.getWeight).getWeight
+
+        candidates = candidates.filter(_.getWeight == widget)
+
+        track = track ::: candidates
+
+      }
+
+      pathEdges = pathEdges :+ track
+    }
+    pathEdges
+  }
 
 
-  def apply(G: Graph, source: Long, target: Long): List[List[Long]] = {
+  def apply(G: Graph, source: Long, target: Long): List[List[Edge]] = {
 
     var parents: Map[Long, Set[Long]] = Map()
     val nodes: Iterable[Node] = G.getNodes.asScala
@@ -83,10 +106,13 @@ object MPFinder extends MinimalPathsFinder {
       colors += dad -> true
     }
 
-    buildPath(source, target, parents)
+
+    buildPathEdges(buildPathNodes(source, target, parents) , G)
+
+
 
   }
-
+  
 
 }
 
