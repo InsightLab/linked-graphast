@@ -1,9 +1,10 @@
 package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
 import br.ufc.insightlab.graphast.model.{Edge, Graph}
+import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathMultipleEdge, PathSingleEdge}
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
 
-class MPFinderTest extends FunSuite with BeforeAndAfterEach {
+class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
 
   //graphs
   var graph_multiple_different_paths: Graph = new Graph
@@ -207,7 +208,7 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
     )
     )
 
-    assert(sameElements(MPFinder(graph_multiple_different_paths, 0l, 10l), path))
+    assert(sameElements(MinimalPathsFinder(graph_multiple_different_paths, 0l, 10l), path))
   }
 
   test("Path Verification 0 -> 7 in the graph_multiple_different_paths") {
@@ -224,7 +225,7 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
     )
 
 
-    assert(sameElements(MPFinder(graph_multiple_different_paths, 0l, 7l), path))
+    assert(sameElements(MinimalPathsFinder(graph_multiple_different_paths, 0l, 7l), path))
   }
 
   test("Path Verification 2 -> 8 in the graph_multiple_different_paths") {
@@ -281,7 +282,7 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
       )
     )
 
-    assert(sameElements(MPFinder(graph_multiple_different_paths, 2l, 8l), path))
+    assert(sameElements(MinimalPathsFinder(graph_multiple_different_paths, 2l, 8l), path))
   }
   test("Path Verification 0 -> 6 in the graph_multiple_cross_paths") {
     //val path: List[List[Long]] =  List(0l, 2l, 3l, 4l, 6l))
@@ -308,26 +309,26 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
       )
     )
 
-    assert(sameElements(MPFinder(graph_multiple_cross_paths, 0l, 6l), path))
+    assert(sameElements(MinimalPathsFinder(graph_multiple_cross_paths, 0l, 6l), path))
 
   }
 
   test("Path Verification 0 -> 0 in the graph_one_node") {
     val path: List[Path] = List(Path(Nil))
 
-    assert(sameElements(MPFinder(graph_one_node, 0l, 0l), path))
+    assert(sameElements(MinimalPathsFinder(graph_one_node, 0l, 0l), path))
   }
 
   test("Path Verification 0 -> 0 in the graph_one_node_with_edge") {
     val path: List[Path] = List(Path(Nil))
 
-    assert(sameElements(MPFinder(graph_one_node_with_edge, 0l, 0l), path))
+    assert(sameElements(MinimalPathsFinder(graph_one_node_with_edge, 0l, 0l), path))
   }
 
   test("Path Verification 0 -> 1 in the graph_with_nodes_without_edges") {
     val path: List[Path] = List()
 
-    assert(sameElements(MPFinder(graph_with_nodes_without_edges, 0l, 1l), path))
+    assert(sameElements(MinimalPathsFinder(graph_with_nodes_without_edges, 0l, 1l), path))
   }
 
   test("Path Verification 0 -> 1 in the graph_with_path_size_1") {
@@ -335,7 +336,7 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
       Path(List( PathSingleEdge(new Edge(0,1))))
     )
 
-    assert(sameElements(MPFinder(graph_with_path_size_1, 0l, 1l), path))
+    assert(sameElements(MinimalPathsFinder(graph_with_path_size_1, 0l, 1l), path))
   }
 
   test("Path verification 0 -> 4 on the graph_with_redundance"){
@@ -348,7 +349,7 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
         PathMultipleEdge(List(new Edge(1,2) , new Edge(1,2) ) ) ,
         PathMultipleEdge(List(new Edge(2,4) , new Edge(2,4) ) )  ) )
     )
-    assert(sameElements(MPFinder(graph_with_redundance , 0l,4l) , path))
+    assert(sameElements(MinimalPathsFinder(graph_with_redundance , 0l,4l) , path))
   }
 
 
