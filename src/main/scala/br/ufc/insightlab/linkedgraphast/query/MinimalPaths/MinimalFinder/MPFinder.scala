@@ -19,12 +19,12 @@ object MPFinder extends MinimalPathsFinder {
     }
   }
 
-  private def buildPathEdges(pathNodes : List[List[Long]] , G : Graph) : List[List[Edge]] = {
-    var pathEdges : List[List[Edge]]=  List()
+  private def buildPathEdges(pathNodes : List[List[Long]] , G : Graph) : List[Path] = {
+    var pathEdges : List[Path]=  List()
 
     for(path <- pathNodes){
 
-      var track : List[Edge] = List()
+      var track : List[PathEdge] = List()
 
       for(node <- 0 to path.length-2){
         val fromNode : Int = node + 1
@@ -34,17 +34,26 @@ object MPFinder extends MinimalPathsFinder {
 
         candidates = candidates.filter(_.getWeight == widget)
 
-        track = track ::: candidates
+        if(candidates.length >1){
+
+          track = track ::: List( new PathMultipleEdge(candidates) )
+        }else{
+
+          track = track ::: List(new PathSingleEdge(candidates(0)))
+        }
+
+
 
       }
 
-      pathEdges = pathEdges :+ track
+      pathEdges = pathEdges :+ Path( track )
     }
+
     pathEdges
   }
 
 
-  def apply(G: Graph, source: Long, target: Long): List[List[Edge]] = {
+  def apply(G: Graph, source: Long, target: Long): List[Path] = {
 
     var parents: Map[Long, Set[Long]] = Map()
     val nodes: Iterable[Node] = G.getNodes.asScala
@@ -113,6 +122,5 @@ object MPFinder extends MinimalPathsFinder {
 
   }
   
-
 }
 

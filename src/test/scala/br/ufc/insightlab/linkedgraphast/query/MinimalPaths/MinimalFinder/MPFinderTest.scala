@@ -162,7 +162,7 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
   }
 
 
-  def sameElements[T](value1: List[List[T]], value2: List[List[T]]): Boolean =
+  def sameElements[T](value1: List[T], value2: List[T]): Boolean =
     value1.forall {
       value2.contains
     } && value1.length == value2.length
@@ -200,14 +200,28 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
 
   test("Path Verification 0 -> 10 in the graph_multiple_different_paths") {
     //val path: List[List[Long]] = List(List(0l, 4l, 6l, 10l))
-    val path: List[List[Edge]] = List( List(new Edge(0l,4l) , new Edge(4l,6l) , new Edge(6l ,10l)) )
+    val path: List[Path] = List(
+      Path(List(  PathSingleEdge(new Edge(0l,4l)) ,
+       PathSingleEdge(new Edge(4l,6l)),
+       PathSingleEdge(new Edge(6l ,10l)))
+    )
+    )
 
     assert(sameElements(MPFinder(graph_multiple_different_paths, 0l, 10l), path))
   }
 
   test("Path Verification 0 -> 7 in the graph_multiple_different_paths") {
     //val path: List[List[Long]] = List(List(0l, 4l, 11l, 7l), List(0l, 4l, 6l, 7l))
-    val path: List[List[Edge]] = List( List( new Edge(0,4) , new Edge(4,11) , new Edge(11,7) ) , List( new Edge(0,4) , new Edge(4,6) , new Edge(6,7)  ) )
+    val path: List[Path] = List(
+      Path(List(  PathSingleEdge(new Edge(0,4)) ,
+       PathSingleEdge(new Edge(4,11)) ,
+       PathSingleEdge(new Edge(11,7) ))
+      ),
+      Path(List( PathSingleEdge(new Edge(0,4)) ,
+         PathSingleEdge(new Edge(4,6)) ,
+         PathSingleEdge(new Edge(6,7) ) )
+      )
+    )
 
 
     assert(sameElements(MPFinder(graph_multiple_different_paths, 0l, 7l), path))
@@ -215,26 +229,83 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
 
   test("Path Verification 2 -> 8 in the graph_multiple_different_paths") {
     //val path: List[List[Long]] =   List(2l, 11l, 7l, 6l, 9l, 8l))
-    val path : List[List[Edge]] = List(
-      List( new Edge(2,1) , new Edge(1,0) , new Edge(0,3) , new Edge(3,5) , new Edge(5,8)  ),
-      List( new Edge(2,11) , new Edge(11,7) , new Edge(7,10) , new Edge(10,9) , new Edge(9,8) ),
-      List(new Edge(2,1) , new Edge(1,4) , new Edge(4,6) , new Edge(6,9) , new Edge(9,8)) ,
-      List(new Edge(2,1) , new Edge(1,4) , new Edge(4,6) , new Edge(6,5) , new Edge(5,8)),
-      List(new Edge(2,11) , new Edge(11,4) , new Edge(4,6) , new Edge(6,5) , new Edge(5,8)),
-      List(new Edge(2,11) , new Edge(11,4) , new Edge(4,6) , new Edge(6,9) , new Edge(9,8)),
-      List(new Edge(2,11) , new Edge(11,7) , new Edge(7,6) , new Edge(6,5) , new Edge(5,8)),
-      List(new Edge(2,11) , new Edge(11,7) , new Edge(7,6) , new Edge(6,9) , new Edge(9,8))
+    val path : List[Path] = List(
+      Path(List(  PathSingleEdge(new Edge(2,1)) ,
+         PathSingleEdge(new Edge(1,0)) ,
+         PathSingleEdge(new Edge(0,3)) ,
+         PathSingleEdge(new Edge(3,5)) ,
+         PathSingleEdge(new Edge(5,8))  )
+      ),
+        Path(List(  PathSingleEdge(new Edge(2,11)) ,
+         PathSingleEdge(new Edge(11,7)) ,
+         PathSingleEdge(new Edge(7,10)) ,
+         PathSingleEdge(new Edge(10,9)) ,
+         PathSingleEdge(new Edge(9,8) ) )
+        ),
+
+      Path(List( PathSingleEdge(new Edge(2,1)) ,
+         PathSingleEdge(new Edge(1,4)) ,
+         PathSingleEdge(new Edge(4,6)) ,
+         PathSingleEdge(new Edge(6,9)) ,
+         PathSingleEdge(new Edge(9,8)) )
+      ) ,
+      Path(List( PathSingleEdge(new Edge(2,1)) ,
+         PathSingleEdge(new Edge(1,4)) ,
+         PathSingleEdge(new Edge(4,6)) ,
+         PathSingleEdge(new Edge(6,5)) ,
+         PathSingleEdge(new Edge(5,8)) )
+      ),
+      Path(List( PathSingleEdge(new Edge(2,11)) ,
+         PathSingleEdge(new Edge(11,4)) ,
+         PathSingleEdge(new Edge(4,6)) ,
+         PathSingleEdge(new Edge(6,5)) ,
+         PathSingleEdge(new Edge(5,8)) )
+      ),
+      Path(List( PathSingleEdge(new Edge(2,11)) ,
+         PathSingleEdge(new Edge(11,4)) ,
+         PathSingleEdge(new Edge(4,6)) ,
+         PathSingleEdge(new Edge(6,9)) ,
+         PathSingleEdge(new Edge(9,8)) )
+      ),
+      Path(List( PathSingleEdge(new Edge(2,11)) ,
+         PathSingleEdge(new Edge(11,7)) ,
+         PathSingleEdge(new Edge(7,6)) ,
+         PathSingleEdge(new Edge(6,5)) ,
+         PathSingleEdge(new Edge(5,8)) )
+      ),
+      Path(List( PathSingleEdge(new Edge(2,11)) ,
+         PathSingleEdge(new Edge(11,7)) ,
+         PathSingleEdge(new Edge(7,6)) ,
+         PathSingleEdge(new Edge(6,9)) ,
+         PathSingleEdge(new Edge(9,8)) )
+      )
     )
 
     assert(sameElements(MPFinder(graph_multiple_different_paths, 2l, 8l), path))
   }
   test("Path Verification 0 -> 6 in the graph_multiple_cross_paths") {
     //val path: List[List[Long]] =  List(0l, 2l, 3l, 4l, 6l))
-    val path :List[List[Edge]] = List(
-      List( new Edge(0,1) , new Edge(1,3) , new Edge(3,4) , new Edge(4,6)  ),
-      List( new Edge(0,1) , new Edge(1,3) , new Edge(3,5) , new Edge(5,6)  ),
-      List( new Edge(0,2) , new Edge(2,3) , new Edge(3,5) , new Edge(5,6)  ),
-      List( new Edge(0,2) , new Edge(2,3) , new Edge(3,4) , new Edge(4,6)  )
+    val path :List[Path] = List(
+      Path(List(  PathSingleEdge(new Edge(0,1)) ,
+         PathSingleEdge(new Edge(1,3)) ,
+         PathSingleEdge(new Edge(3,4)) ,
+         PathSingleEdge(new Edge(4,6))  )
+      ),
+      Path(List(  PathSingleEdge(new Edge(0,1)) ,
+         PathSingleEdge(new Edge(1,3)) ,
+         PathSingleEdge(new Edge(3,5)) ,
+         PathSingleEdge(new Edge(5,6))  )
+      ),
+      Path(List(  PathSingleEdge(new Edge(0,2)) ,
+         PathSingleEdge(new Edge(2,3)) ,
+         PathSingleEdge(new Edge(3,5)) ,
+         PathSingleEdge(new Edge(5,6))  )
+      ),
+      Path(List(  PathSingleEdge(new Edge(0,2)) ,
+         PathSingleEdge(new Edge(2,3)) ,
+         PathSingleEdge(new Edge(3,4)) ,
+         PathSingleEdge(new Edge(4,6))  )
+      )
     )
 
     assert(sameElements(MPFinder(graph_multiple_cross_paths, 0l, 6l), path))
@@ -242,33 +313,40 @@ class MPFinderTest extends FunSuite with BeforeAndAfterEach {
   }
 
   test("Path Verification 0 -> 0 in the graph_one_node") {
-    val path: List[List[Edge]] = List(Nil)
+    val path: List[Path] = List(Path(Nil))
 
     assert(sameElements(MPFinder(graph_one_node, 0l, 0l), path))
   }
 
   test("Path Verification 0 -> 0 in the graph_one_node_with_edge") {
-    val path: List[List[Edge]] = List(Nil)
+    val path: List[Path] = List(Path(Nil))
 
     assert(sameElements(MPFinder(graph_one_node_with_edge, 0l, 0l), path))
   }
 
   test("Path Verification 0 -> 1 in the graph_with_nodes_without_edges") {
-    val path: List[List[Edge]] = List()
+    val path: List[Path] = List()
 
     assert(sameElements(MPFinder(graph_with_nodes_without_edges, 0l, 1l), path))
   }
 
   test("Path Verification 0 -> 1 in the graph_with_path_size_1") {
-    val path: List[List[Edge]] = List(List(new Edge(0,1)))
+    val path: List[Path] = List(
+      Path(List( PathSingleEdge(new Edge(0,1))))
+    )
 
     assert(sameElements(MPFinder(graph_with_path_size_1, 0l, 1l), path))
   }
 
   test("Path verification 0 -> 4 on the graph_with_redundance"){
-    val path : List[List[Edge]] = List(
-      List( new Edge(0,1) , new Edge(0,1) , new Edge(1,3) , new Edge(1,3) , new Edge(3,4) , new Edge(3,4)),
-      List( new Edge(0,1) , new Edge(0,1) , new Edge(1,2) , new Edge(1,2) , new Edge(2,4) , new Edge(2,4))
+    val path : List[Path] = List(
+      Path(List(  PathMultipleEdge( List( new Edge(0,1) , new Edge(0,1) ) ) ,
+         PathMultipleEdge( List( new Edge(1,3) , new Edge(1,3) ) ) ,
+         PathMultipleEdge( List( new Edge(3,4) , new Edge(3,4) ) ) )
+      ),
+      Path(List( PathMultipleEdge( List( new Edge(0,1) , new Edge(0,1) ) ) ,
+        PathMultipleEdge(List(new Edge(1,2) , new Edge(1,2) ) ) ,
+        PathMultipleEdge(List(new Edge(2,4) , new Edge(2,4) ) )  ) )
     )
     assert(sameElements(MPFinder(graph_with_redundance , 0l,4l) , path))
   }
