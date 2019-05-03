@@ -2,7 +2,14 @@ package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils
 
 import br.ufc.insightlab.graphast.model.Edge
 
-//class to mark a redundancy, there is a collection of the edges that are part of this redundancy
+/**
+  *Class to mark a redundancy
+  *There is a collection of the edges that are part of this redundancy
+  *
+  * @author Joao Castelo Branco
+  * @version 0.1
+  */
+
 case class PathMultipleEdge(edges: List[Edge]) extends PathEdge {
 
 

@@ -1,6 +1,8 @@
 package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
 import br.ufc.insightlab.graphast.model.{Edge, Graph}
+import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
+import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathMultipleEdge, PathSingleEdge}
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
 
@@ -14,6 +16,7 @@ class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
   var graph_with_nodes_without_edges: Graph = new Graph
   var graph_with_path_size_1: Graph = new Graph
   var graph_with_redundance: Graph = new Graph
+
 
   override def beforeEach(): Unit = {
     graph_multiple_different_paths = new Graph
@@ -351,6 +354,9 @@ class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
     )
     assert(sameElements(MinimalPathsFinder(graph_with_redundance , 0l,4l) , path))
   }
-
+  test("bugzila"){
+    var graph: LinkedGraph = NTripleParser.parse("/Users/joaocb/linked-graphast/src/main/resources/dbpedia.nt")
+    println(MinimalPathsFinder(graph,4730l,4325l))
+  }
 
 }

@@ -2,25 +2,58 @@ package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
 import scala.collection.JavaConverters._
 import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
+import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathEdge, PathMultipleEdge, PathSingleEdge}
 
+
+/**
+  * A singleton class to calculate multiple minimum paths
+  *
+  *
+  * @author Joao Castelo Branco
+  * @version 0.2
+  */
+
 object MinimalPathsFinder extends MinimalPaths {
-  //function to mount the path represented by nodes
+
+  /**
+    * Function to mount the path represented by nodes
+    *
+    * @see [[LinkedGraph.getNode()]]
+    * @param source the node that starts the path
+    * @param target the node ending the path
+    * @param parents the dictionary containing minimal parents of nodes
+    * @return a list of lists for each variation of paths, it is represented by nodes
+    */
+
   private def buildPathNodes(source: Long, target: Long, parents: Map[Long, Set[Long]]): List[List[Long]] = {
+
     //base case, when the source was hit, the path ended
     if (source == target) {
+
       List(List(source))
+
     } else {
+
       //the recursion consists of assembling the list to each branch of the path
       parents(target).toList.flatMap { dad =>
+
         val paths: List[List[Long]] = buildPathNodes(source, dad, parents)
+
         paths.map((path: List[Long]) => path :+ target)
 
       }
     }
   }
-  //function to mount the edge path from the list of nodes that make up the minimum path
+
+  /**
+    * Function to mount the edge path from the list of nodes that make up the minimum path
+    *
+    * @param pathNodes a list of lists for each variation of paths, it is represented by nodes
+    * @return a list of lists for each variation of paths, it is represented by edges
+    */
+
   private def buildPathEdges(pathNodes : List[List[Long]] , G : Graph) : List[Path] = {
 
     var pathEdges : List[Path]=  List()
@@ -30,10 +63,22 @@ object MinimalPathsFinder extends MinimalPaths {
       var track : List[PathEdge] = List()
 
       for(node <- 0 to path.length-2){
+
         val fromNode : Int = node + 1
 
         //collection of all edges that leave the node and is destined fromNode
-        var candidates : List[Edge] = G.getOutEdges(path(node)).asScala.toList.filter(_.getToNodeId == path(fromNode))
+        var candidates: List[Edge] = List()
+
+        var candidate : List[Edge] = G.getOutEdges(path(node)).asScala.toList
+
+        for(i <- candidate){
+
+          if(i.getToNodeId == path(fromNode) || i.getFromNodeId == path(fromNode) ){
+
+            candidates = candidates ::: List(i)
+
+          }
+        }
 
         //selecting the lesser edges between them
         val widget :Double = candidates.minBy(_.getWeight).getWeight
@@ -43,14 +88,13 @@ object MinimalPathsFinder extends MinimalPaths {
         if(candidates.length >1){
 
           track = track ::: List(  PathMultipleEdge(candidates) )
+
         }else{
 
           //otherwise, it must be represented by PathSingleEdge
           track = track ::: List( PathSingleEdge(candidates(0)))
+
         }
-
-
-
       }
 
       pathEdges = pathEdges :+ utils.Path( track )
@@ -59,8 +103,15 @@ object MinimalPathsFinder extends MinimalPaths {
     pathEdges
   }
 
+  /**
+    * Breadth-first search modified to find all the minimal paths between source and target
+    *
+    * @param G the graph where the query will be made
+    * @param source the node that starts the path
+    * @param target the node ending the path
+    * @return a list of lists for each variation of paths, it is represented by edges
+    */
 
-  //Breadth-first search modified to find all the minimal paths between source and target
   def apply(G: Graph, source: Long, target: Long): List[Path] = {
 
 
@@ -89,10 +140,25 @@ object MinimalPathsFinder extends MinimalPaths {
 
       //iteration over the edges that leave the node
       for {
+
         edge <- G.getOutEdges(dad).asScala
 
-        fromNodeId: Long = edge.getToNodeId
-      } {
+      }{
+
+        var fromNodeId: Long = 0l
+
+        if(edge.isBidirectional){
+
+          if(edge.getToNodeId == dad){
+
+            fromNodeId = edge.getFromNodeId
+
+          }else{
+
+            fromNodeId = edge.getToNodeId
+
+          }
+        }
 
         //iteration over the edges that leave the node
         if (!colors(fromNodeId)) {
@@ -107,12 +173,10 @@ object MinimalPathsFinder extends MinimalPaths {
 
               NextNodesId += fromNodeId
 
-
             }
 
             //if the distance found was equal to less cataloged, one should register the minimal father of this node
             if(distances(fromNodeId) == widget){
-
 
               parents += fromNodeId -> (parents(fromNodeId)+dad)
 
@@ -128,16 +192,16 @@ object MinimalPathsFinder extends MinimalPaths {
 
         }
       }
+
       //marking the node as visited
       colors += dad -> true
+
     }
 
     //mounting the edge path
     buildPathEdges(buildPathNodes(source, target, parents) , G)
 
-
-
   }
-  
+
 }
 
