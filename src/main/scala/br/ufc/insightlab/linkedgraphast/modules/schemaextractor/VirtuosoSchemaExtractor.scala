@@ -3,10 +3,15 @@ package br.ufc.insightlab.linkedgraphast.modules.schemaextractor
 import java.util.concurrent.TimeUnit
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
+import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Relation}
+import br.ufc.insightlab.linkedgraphast.model.node.{Literal, URI}
 import org.apache.jena.query.{QueryExecutionFactory, QueryFactory}
 import org.slf4j.LoggerFactory
-import scala.collection.JavaConverters._
 
+import scala.collection.JavaConverters._
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success, Try}
 
 object VirtuosoSchemaExtractor {
@@ -63,7 +68,7 @@ object VirtuosoSchemaExtractor {
       |  ?s a ?sc .
       |
       |  filter not exists {
-      |    ?x rdfs:subClassOf ?sc
+      |    ?x <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?sc
       |  }
       |}
     """.stripMargin
@@ -75,7 +80,7 @@ object VirtuosoSchemaExtractor {
        |  ?o a ?oc .
        |
  |  filter not exists {
-       |    ?x rdfs:subClassOf ?oc
+       |    ?x <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?oc
        |  }
        |}
     """.stripMargin
@@ -88,6 +93,10 @@ object VirtuosoSchemaExtractor {
        |
     """.stripMargin
 
+  private val labelURI = URI("http://www.w3.org/2000/01/rdf-schema#label")
+  private val domainURI = URI("http://www.w3.org/2000/01/rdf-schema#domain")
+  private val rangeURI = URI("http://www.w3.org/2000/01/rdf-schema#range")
+
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   private def insertFromOnSPARQL(sparql: String, uri: String): String = {
@@ -95,7 +104,7 @@ object VirtuosoSchemaExtractor {
     sparql.substring(0, idx) + "from <" + uri + "> " + sparql.substring(idx)
   }
 
-  def runQuery(url: String, baseURI: String)(sparql: String):Iterator[List[String]] = {
+  def runQuery(url: String, baseURI: String)(sparql: String): Iterator[List[String]] = {
     val completeSPARQL = insertFromOnSPARQL(sparql, baseURI)
 //    println(completeSPARQL)
     Try({
@@ -113,7 +122,7 @@ object VirtuosoSchemaExtractor {
       case Success(r) => r
       case Failure(e) =>
         //        e.printStackTrace()
-        logger.info(e.toString)
+        logger.warn(s"Error processing query\n$completeSPARQL\n"+e.toString)
         Nil.iterator
     }
   }
@@ -135,7 +144,7 @@ object VirtuosoSchemaExtractor {
       case Success(r) => r
       case Failure(e) =>
         //        e.printStackTrace()
-        logger.info(e.toString)
+        logger.warn(e.toString)
         -1
     }
   }
@@ -144,16 +153,58 @@ object VirtuosoSchemaExtractor {
     val graph = new LinkedGraph()
     val runner = runQuery(endpointURL, graphURI)(_)
 
-    println(runCountQuery(endpointURL, graphURI)(propertiesCountSPARQL))
+    def labels(concept: String): Future[Iterator[List[String]]] = Future { runner(generateLabelsSPARQL(concept)) }
+    def domains(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyDomainSPARQL(property)) }
+    def ranges(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyRangeSPARQL(property)) }
+
     val numberOfProperties = runCountQuery(endpointURL, graphURI)(propertiesCountSPARQL)
+    logger.info(s"Distinct properties at the database: $numberOfProperties")
 
     val properties: List[String] =
-      (for(offset <- 0 to numberOfProperties by batchSize) yield runner(propertiesOffsetSPARQL+offset).toList.map(_.head))
-        .toList
+      (for(offset <- 0 to numberOfProperties by batchSize) yield {
+        logger.info(s"Getting properties from $offset to ${offset+batchSize}")
+        runner(propertiesOffsetSPARQL+offset).toList.map(_.head)
+      })
         .flatten
+        .distinct
+        .toList
 
-    println(properties.length)
+    logger.info(s"${properties.distinct.length} properties retrieved")
 
+    val operations = properties.take(2).par.map { property => {
+      val propertyURI = URI(property)
+      this.synchronized(graph.addNode(propertyURI))
+
+      val l = labels(property).map ( i => i.foreach(l => {
+        val label = Literal(l.head)
+        this.synchronized(if(!graph.containsNode(label.getId)) graph.addNode(label))
+        graph.addLink(Attribute(propertyURI, labelURI, label))
+      } ))
+      logger.info(s"Getting labels to property $propertyURI")
+
+      val d = domains(property).map ( i => i.foreach(d =>{
+        val uri = URI(d.head)
+        this.synchronized(if(!graph.containsNode(uri.getId)) graph.addNode(uri))
+        graph.addLink(Relation(propertyURI, domainURI, uri))
+      } ))
+      logger.info(s"Getting domains to property $propertyURI")
+
+      val r = ranges(property).map ( i => i.foreach(r =>{
+        val uri = URI(r.head)
+        this.synchronized(if(!graph.containsNode(uri.getId)) graph.addNode(uri))
+        graph.addLink(Relation(propertyURI, rangeURI, uri))
+      } ))
+      logger.info(s"Getting ranges to property $propertyURI")
+
+      for {
+        _ <- l
+        _ <- d
+        _ <- r
+      } yield graph
+
+    }}.toList
+
+    Await.result(Future.sequence(operations), Duration.Inf)
     graph
   }
 
@@ -161,7 +212,11 @@ object VirtuosoSchemaExtractor {
     val serviceURL = "http://dbpedia.org/sparql"
     val graphURI = "http://dbpedia.org"
 
-    this(serviceURL, graphURI)
+    val graph = this(serviceURL, graphURI, 10000)
+
+    println(graph.getNumberOfEdges)
+    println(graph.toNTriple)
   }
+
 
 }
