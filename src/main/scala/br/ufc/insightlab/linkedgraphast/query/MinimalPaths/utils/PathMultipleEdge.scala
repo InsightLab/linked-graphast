@@ -7,6 +7,7 @@ import br.ufc.insightlab.graphast.model.Edge
   *There is a collection of the edges that are part of this redundancy
   *
   * @author Joao Castelo Branco
+  * @see Edge
   * @version 0.1
   */
 

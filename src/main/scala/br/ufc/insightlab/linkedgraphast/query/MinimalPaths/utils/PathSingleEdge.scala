@@ -6,6 +6,7 @@ import br.ufc.insightlab.graphast.model.Edge
   *Auxiliary class to demarcate the section without redundancy
   *
   * @author Joao Castelo Branco
+  * @see Edge
   * @version 0.1
   */
 

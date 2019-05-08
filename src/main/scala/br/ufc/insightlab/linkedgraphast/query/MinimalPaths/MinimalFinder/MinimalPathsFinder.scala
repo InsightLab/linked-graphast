@@ -2,7 +2,6 @@ package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
 import scala.collection.JavaConverters._
 import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
-import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathEdge, PathMultipleEdge, PathSingleEdge}
 
@@ -10,7 +9,9 @@ import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathEdge
 /**
   * A singleton class to calculate multiple minimum paths
   *
-  *
+  * @see Graph
+  * @see Node
+  * @see Edge
   * @author Joao Castelo Branco
   * @version 0.2
   */
@@ -20,7 +21,6 @@ object MinimalPathsFinder extends MinimalPaths {
   /**
     * Function to mount the path represented by nodes
     *
-    * @see [[LinkedGraph.getNode()]]
     * @param source the node that starts the path
     * @param target the node ending the path
     * @param parents the dictionary containing minimal parents of nodes
@@ -51,6 +51,9 @@ object MinimalPathsFinder extends MinimalPaths {
     * Function to mount the edge path from the list of nodes that make up the minimum path
     *
     * @param pathNodes a list of lists for each variation of paths, it is represented by nodes
+    * @param G the graph where the query was made
+    * @see Graph
+    * @see Edge
     * @return a list of lists for each variation of paths, it is represented by edges
     */
 
@@ -92,7 +95,7 @@ object MinimalPathsFinder extends MinimalPaths {
         }else{
 
           //otherwise, it must be represented by PathSingleEdge
-          track = track ::: List( PathSingleEdge(candidates(0)))
+          track = track ::: List( PathSingleEdge(candidates.head))
 
         }
       }
@@ -109,6 +112,9 @@ object MinimalPathsFinder extends MinimalPaths {
     * @param G the graph where the query will be made
     * @param source the node that starts the path
     * @param target the node ending the path
+    * @see Graph
+    * @see Edge
+    * @see Node
     * @return a list of lists for each variation of paths, it is represented by edges
     */
 
