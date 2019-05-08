@@ -2,8 +2,12 @@ package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
 import scala.collection.JavaConverters._
 import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
+import br.ufc.insightlab.graphast.query.shortestpath.DijkstraStrategy
+import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Relation}
+import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathEdge, PathMultipleEdge, PathSingleEdge}
+import scala.collection.mutable.Queue
 
 
 /**
@@ -137,12 +141,13 @@ object MinimalPathsFinder extends MinimalPaths {
     colors += source -> true
     distances += (source -> 0)
 
-    var NextNodesId: Set[Long] = Set(source)
+    val NextNodesId: Queue[Long] = Queue(source)
+
 
     while (NextNodesId.nonEmpty) {
 
-      val dad: Long = NextNodesId.head
-      NextNodesId = NextNodesId - NextNodesId.head
+      val dad: Long = NextNodesId.dequeue
+
 
       //iteration over the edges that leave the node
       for {
@@ -177,7 +182,7 @@ object MinimalPathsFinder extends MinimalPaths {
             //security check to prevent the target being a part of some way minimum path
             if (fromNodeId != target) {
 
-              NextNodesId += fromNodeId
+              NextNodesId.enqueue(fromNodeId)
 
             }
 
@@ -193,9 +198,7 @@ object MinimalPathsFinder extends MinimalPaths {
 
               distances += fromNodeId -> widget
             }
-
           }
-
         }
       }
 
