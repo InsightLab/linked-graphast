@@ -171,7 +171,7 @@ object VirtuosoSchemaExtractor {
 
     logger.info(s"${properties.distinct.length} properties retrieved")
 
-    val operations = properties.take(2).par.map { property => {
+    val operations = properties.par.map { property => {
       val propertyURI = URI(property)
       this.synchronized(graph.addNode(propertyURI))
 
