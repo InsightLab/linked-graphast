@@ -8,7 +8,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
 
-object Neo4jClosure {
+object Neo4jDijkstraClosure extends Closure {
 
   private val log: Logger = LoggerFactory.getLogger(this.getClass)
 
