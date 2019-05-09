@@ -5,6 +5,7 @@ import br.ufc.insightlab.graphast.query.shortestpath.DijkstraStrategy
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Link, Relation}
 import br.ufc.insightlab.linkedgraphast.model.node.URI
+import br.ufc.insightlab.linkedgraphast.modules.querybuilder.SchemaSPARQLQueryBuilder
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder.MinimalPathsFinder
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathMultipleEdge, PathSingleEdge}
@@ -144,7 +145,7 @@ object MinimalPathsClosure extends Closure {
   def main(args: Array[String]): Unit = {
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
 
-    val fromNode = graph.getNodeByURI("person@en")
+    val fromNode = graph.getNodeByURI("artist@en")
     val toNode = graph.getNodeByURI("award@en")
 
     val nodes = List(fromNode, toNode)
@@ -152,6 +153,10 @@ object MinimalPathsClosure extends Closure {
     val fragment = MinimalPathsClosure(graph)(nodes)
 
     println(fragment.linksAsString())
+
+    println("-------------------")
+
+    println(SchemaSPARQLQueryBuilder(fragment, Map.empty, graph))
 
 
   }

@@ -17,7 +17,7 @@ object ClosureHelper {
           else if (l.uri.contains("rdf-schema#subClassOf"))
             link.setWeight(5)
           else if (l.uri.contains("rdf-schema#sub"))
-            link.setWeight(10)
+            link.setWeight(100)
 
         case Attribute(_, l, _) =>
           if(l.uri.endsWith("#label"))
