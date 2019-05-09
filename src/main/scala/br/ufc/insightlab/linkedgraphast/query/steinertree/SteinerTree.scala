@@ -1,7 +1,7 @@
 package br.ufc.insightlab.linkedgraphast.query.steinertree
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
-import br.ufc.insightlab.linkedgraphast.query.closure.Closure
+import br.ufc.insightlab.linkedgraphast.query.closure.{DijkstraClosure, MinimalPathsClosure}
 import br.ufc.insightlab.graphast.model.Node
 
 object SteinerTree {
@@ -12,6 +12,7 @@ object SteinerTree {
   def apply(g: LinkedGraph)(nodes: List[Node]): LinkedGraph = {
     require(nodes.forall{n => g.containsNode(n.getId)},"All nodes must be on the graph")
 
-    Closure(g)(nodes)
+//    DijkstraClosure(g)(nodes)
+    MinimalPathsClosure(g)(nodes)
   }
 }

@@ -1,4 +1,4 @@
-<http://dbpedia.org/ontology/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+println(g.getNode(4730l))<http://dbpedia.org/ontology/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
 <http://dbpedia.org/ontology/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocommons/voaf#Vocabulary> .
 <http://dbpedia.org/ontology/> <http://purl.org/vocab/vann/preferredNamespacePrefix> "dbo" .
 <http://dbpedia.org/ontology/> <http://purl.org/vocab/vann/preferredNamespaceUri> "http://dbpedia.org/ontology/" .
