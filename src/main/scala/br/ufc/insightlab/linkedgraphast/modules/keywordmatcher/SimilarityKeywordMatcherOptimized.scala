@@ -6,7 +6,8 @@ import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 
 import scala.collection.mutable
 
-class SimilarityKeywordMatcherOptimized (metric: SimilarityMetric, threshold: Double = 0.9) extends KeywordMatcher {
+class SimilarityKeywordMatcherOptimized
+(metric: SimilarityMetric, threshold: Double = 0.9) extends KeywordMatcher {
 
   require(threshold <= 1.0)
   require(threshold >= 0.0)
