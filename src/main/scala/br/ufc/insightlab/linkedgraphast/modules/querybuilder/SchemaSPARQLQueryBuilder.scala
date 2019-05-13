@@ -209,7 +209,9 @@ object SchemaSPARQLQueryBuilder {
         val s = getVar(triple.source.uri, block)
         query.addResultVar(s)
 
-        val p = model.createProperty(triple.uri.uri).asNode
+        val p =
+          if(triple.uri.uri.startsWith("?")) Var.alloc(triple.uri.uri.drop(1))
+          else model.createProperty(triple.uri.uri).asNode
 
         val o = getVar(triple.target.value, block)
         query.addResultVar(o)
