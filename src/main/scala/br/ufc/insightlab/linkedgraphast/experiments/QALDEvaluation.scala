@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
 import play.api.libs.json.{JsArray, Json, Reads}
 
 import scala.io.Source
+import scala.util.Try
 
 object QALDEvaluation{
 
@@ -41,7 +42,7 @@ object QALDEvaluation{
 
   val basePath = "src/evaluation/resources/QALD"
 
-  val string = Source.fromFile("src/evaluation/resources/QALD-9.json").getLines.mkString("\n")
+  val string = Source.fromFile("src/evaluation/resources/QALD-5.json").getLines.mkString("\n")
 
   val data = Json.parse(string)
     .as[JsArray]
@@ -55,11 +56,13 @@ object QALDEvaluation{
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
     val QB = new VonQBESparqlBuilder(graph, Wikifier)
 
-    if(generateResults){
-      new File(basePath)
-        .listFiles()
-        .filter(_.isDirectory)
-        .foreach(FileUtils.deleteDirectory)
+    if(generateResults && generateSPARQL){
+      Try(
+        new File(basePath)
+          .listFiles()
+          .filter(_.isDirectory)
+          .foreach(FileUtils.deleteDirectory)
+      )
     }
 
     val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
@@ -107,7 +110,7 @@ object QALDEvaluation{
         if(recall > 0 || precision > 0 || recallNER > 0 || precisionNER > 0){
           logger.info(s"query ${q.id}: ${q.text}")
           logger.info(s"Recall value without NER: $recall | Precision value without NER: $precision")
-          logger.info(s"Recall value with NER: $recall | Precision value with NER: $precision")
+          logger.info(s"Recall value with NER: $recallNER | Precision value with NER: $precisionNER")
         }
         ((recall, precision), (recallNER, precisionNER))
       } else ((0.0,0.0), (0.0,0.0))
