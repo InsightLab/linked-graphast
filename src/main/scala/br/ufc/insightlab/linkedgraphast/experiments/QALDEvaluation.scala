@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
 import play.api.libs.json.{JsArray, Json, Reads}
 
 import scala.io.Source
+import scala.util.Try
 
 object QALDEvaluation{
 
@@ -55,18 +56,13 @@ object QALDEvaluation{
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
     val QB = new VonQBESparqlBuilder(graph, Wikifier)
 
-    if(generateResults){
-      new File(basePath)
-        .listFiles()
-        .filter(_.isDirectory)
-        .foreach(FileUtils.deleteDirectory)
-    }
-
     if(generateResults && generateSPARQL){
-      new File(basePath)
-        .listFiles()
-        .filter(_.isDirectory)
-        .foreach(FileUtils.deleteDirectory)
+      Try(
+        new File(basePath)
+          .listFiles()
+          .filter(_.isDirectory)
+          .foreach(FileUtils.deleteDirectory)
+      )
     }
 
     val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
