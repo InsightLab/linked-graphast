@@ -58,8 +58,8 @@ object MinimalPathsClosure extends Closure {
             graph.addNode(link.source)
           if(!graph.containsNode(link.target.getId))
             graph.addNode(link.target)
-
-          graph.addLink(link)
+          if(!graph.hasLink(link))
+            graph.addLink(link)
         }
 
       }
