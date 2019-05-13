@@ -42,7 +42,7 @@ object QALDEvaluation{
 
   val basePath = "src/evaluation/resources/QALD"
 
-  val string = Source.fromFile("src/evaluation/resources/QALD-9.json").getLines.mkString("\n")
+  val string = Source.fromFile("src/evaluation/resources/QALD-5.json").getLines.mkString("\n")
 
   val data = Json.parse(string)
     .as[JsArray]
@@ -110,7 +110,7 @@ object QALDEvaluation{
         if(recall > 0 || precision > 0 || recallNER > 0 || precisionNER > 0){
           logger.info(s"query ${q.id}: ${q.text}")
           logger.info(s"Recall value without NER: $recall | Precision value without NER: $precision")
-          logger.info(s"Recall value with NER: $recall | Precision value with NER: $precision")
+          logger.info(s"Recall value with NER: $recallNER | Precision value with NER: $precisionNER")
         }
         ((recall, precision), (recallNER, precisionNER))
       } else ((0.0,0.0), (0.0,0.0))
