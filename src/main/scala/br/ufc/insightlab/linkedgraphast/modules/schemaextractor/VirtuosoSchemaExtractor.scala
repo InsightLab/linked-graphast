@@ -1,5 +1,6 @@
 package br.ufc.insightlab.linkedgraphast.modules.schemaextractor
 
+import java.io.{File, PrintWriter}
 import java.util.concurrent.TimeUnit
 
 import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
@@ -153,9 +154,12 @@ object VirtuosoSchemaExtractor {
     val graph = new LinkedGraph()
     val runner = runQuery(endpointURL, graphURI)(_)
 
-    def labels(concept: String): Future[Iterator[List[String]]] = Future { runner(generateLabelsSPARQL(concept)) }
-    def domains(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyDomainSPARQL(property)) }
-    def ranges(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyRangeSPARQL(property)) }
+//    def labels(concept: String): Future[Iterator[List[String]]] = Future { runner(generateLabelsSPARQL(concept)) }
+//    def domains(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyDomainSPARQL(property)) }
+//    def ranges(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyRangeSPARQL(property)) }
+    def labels(concept: String): Iterator[List[String]] =  runner(generateLabelsSPARQL(concept))
+    def domains(property: String): Iterator[List[String]] = runner(generatePropertyDomainSPARQL(property))
+    def ranges(property: String): Iterator[List[String]] = runner(generatePropertyRangeSPARQL(property))
 
     val numberOfProperties = runCountQuery(endpointURL, graphURI)(propertiesCountSPARQL)
     logger.info(s"Distinct properties at the database: $numberOfProperties")
@@ -171,40 +175,40 @@ object VirtuosoSchemaExtractor {
 
     logger.info(s"${properties.distinct.length} properties retrieved")
 
-    val operations = properties.par.map { property => {
+    val operations = properties.map { property => {
       val propertyURI = URI(property)
       this.synchronized(graph.addNode(propertyURI))
 
-      val l = labels(property).map ( i => i.foreach(l => {
-        val label = Literal(l.head)
+      val l = labels(property).foreach ( i => i.foreach(l => {
+        val label = Literal(l)
         this.synchronized(if(!graph.containsNode(label.getId)) graph.addNode(label))
         graph.addLink(Attribute(propertyURI, labelURI, label))
       } ))
       logger.info(s"Getting labels to property $propertyURI")
 
-      val d = domains(property).map ( i => i.foreach(d =>{
-        val uri = URI(d.head)
+      val d = domains(property).foreach ( i => i.foreach(d =>{
+        val uri = URI(d)
         this.synchronized(if(!graph.containsNode(uri.getId)) graph.addNode(uri))
         graph.addLink(Relation(propertyURI, domainURI, uri))
       } ))
       logger.info(s"Getting domains to property $propertyURI")
 
-      val r = ranges(property).map ( i => i.foreach(r =>{
-        val uri = URI(r.head)
+      val r = ranges(property).foreach ( i => i.foreach(r =>{
+        val uri = URI(r)
         this.synchronized(if(!graph.containsNode(uri.getId)) graph.addNode(uri))
         graph.addLink(Relation(propertyURI, rangeURI, uri))
       } ))
       logger.info(s"Getting ranges to property $propertyURI")
 
-      for {
-        _ <- l
-        _ <- d
-        _ <- r
-      } yield graph
+//      for {
+//        _ <- l
+//        _ <- d
+//        _ <- r
+//      } yield graph
 
     }}.toList
 
-    Await.result(Future.sequence(operations), Duration.Inf)
+//    Await.result(Future.sequence(operations), Duration.Inf)
     graph
   }
 
@@ -214,8 +218,11 @@ object VirtuosoSchemaExtractor {
 
     val graph = this(serviceURL, graphURI, 10000)
 
+    println(graph.getNumberOfNodes)
     println(graph.getNumberOfEdges)
-    println(graph.toNTriple)
+
+    val wr = new PrintWriter(new File("extracted-schema.nt"))
+    wr.write(graph.toNTriple)
   }
 
 
