@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{Await, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success, Try}
 
@@ -221,8 +221,7 @@ object VirtuosoSchemaExtractor {
     println(graph.getNumberOfNodes)
     println(graph.getNumberOfEdges)
 
-    val wr = new PrintWriter(new File("extracted-schema.nt"))
-    wr.write(graph.toNTriple)
+    graph.save("dbpedia-extracted.nt")
   }
 
 
