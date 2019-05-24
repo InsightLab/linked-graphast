@@ -97,6 +97,13 @@ object VirtuosoSchemaExtractor {
   private val labelURI = URI("http://www.w3.org/2000/01/rdf-schema#label")
   private val domainURI = URI("http://www.w3.org/2000/01/rdf-schema#domain")
   private val rangeURI = URI("http://www.w3.org/2000/01/rdf-schema#range")
+  private val typeURI = URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+
+  private val classURI = URI("http://www.w3.org/2002/07/owl#Class")
+  private val rdfPropertyURI = URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+  private val dataTypeURI = URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+  private val objectPropertyURI = URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+
 
   private val logger = LoggerFactory.getLogger(this.getClass)
 
@@ -175,38 +182,63 @@ object VirtuosoSchemaExtractor {
 
     logger.info(s"${properties.distinct.length} properties retrieved")
 
-    val operations = properties.map { property => {
-      val propertyURI = URI(property)
-      this.synchronized(graph.addNode(propertyURI))
+    graph.addNodes(rdfPropertyURI, classURI, dataTypeURI, objectPropertyURI)
 
-      val l = labels(property).foreach ( i => i.foreach(l => {
+    properties.foreach { property => {
+      val propertyURI = URI(property)
+      this.synchronized({
+        graph.addNode(propertyURI)
+        graph.addLink(Relation(propertyURI, typeURI, rdfPropertyURI))
+      })
+
+      logger.info(s"Getting labels to property $propertyURI")
+      val l = labels(property).foreach( i => i.foreach(l => {
         val label = Literal(l)
         this.synchronized(if(!graph.containsNode(label.getId)) graph.addNode(label))
         graph.addLink(Attribute(propertyURI, labelURI, label))
       } ))
-      logger.info(s"Getting labels to property $propertyURI")
 
-      val d = domains(property).foreach ( i => i.foreach(d =>{
+      logger.info(s"Getting domains to property $propertyURI")
+      domains(property).foreach ( i => i.foreach(d =>{
         val uri = URI(d)
-        this.synchronized(if(!graph.containsNode(uri.getId)) graph.addNode(uri))
+        this.synchronized(
+          if(!graph.containsNode(uri.getId)) {
+            graph.addNode(uri)
+            graph.addLink(Relation(uri, typeURI, classURI))
+            labels(uri.uri).foreach(ls => {
+              val label = Literal(ls.head)
+              if(!graph.containsNode(label.getId)) graph.addNode(label)
+              graph.addLink(Attribute(uri, labelURI, label))
+            })
+          }
+        )
         graph.addLink(Relation(propertyURI, domainURI, uri))
       } ))
-      logger.info(s"Getting domains to property $propertyURI")
 
-      val r = ranges(property).foreach ( i => i.foreach(r =>{
+      logger.info(s"Getting ranges to property $propertyURI")
+      val r = ranges(property)
+
+      if(r.isEmpty) graph.addLink(Relation(propertyURI, typeURI, objectPropertyURI))
+      else graph.addLink(Relation(propertyURI, typeURI, dataTypeURI))
+
+      r.foreach ( i => i.foreach(r =>{
         val uri = URI(r)
-        this.synchronized(if(!graph.containsNode(uri.getId)) graph.addNode(uri))
+        this.synchronized(
+          if(!graph.containsNode(uri.getId)) {
+            graph.addNode(uri)
+            graph.addLink(Relation(uri, typeURI, classURI))
+            labels(uri.uri).foreach(ls => {
+              val label = Literal(ls.head)
+              if(!graph.containsNode(label.getId)) graph.addNode(label)
+              graph.addLink(Attribute(uri, labelURI, label))
+            })
+          }
+        )
         graph.addLink(Relation(propertyURI, rangeURI, uri))
       } ))
-      logger.info(s"Getting ranges to property $propertyURI")
 
-//      for {
-//        _ <- l
-//        _ <- d
-//        _ <- r
-//      } yield graph
 
-    }}.toList
+    }}
 
 //    Await.result(Future.sequence(operations), Duration.Inf)
     graph
