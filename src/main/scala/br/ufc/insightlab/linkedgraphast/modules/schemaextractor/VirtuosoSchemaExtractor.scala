@@ -101,8 +101,8 @@ object VirtuosoSchemaExtractor {
 
   private val classURI = URI("http://www.w3.org/2002/07/owl#Class")
   private val rdfPropertyURI = URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
-  private val dataTypeURI = URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
-  private val objectPropertyURI = URI("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+  private val dataTypeURI = URI("http://www.w3.org/2002/07/owl#DatatypeProperty")
+  private val objectPropertyURI = URI("http://www.w3.org/2002/07/owl#ObjectProperty")
 
 
   private val logger = LoggerFactory.getLogger(this.getClass)
@@ -112,7 +112,7 @@ object VirtuosoSchemaExtractor {
     sparql.substring(0, idx) + "from <" + uri + "> " + sparql.substring(idx)
   }
 
-  def runQuery(url: String, baseURI: String)(sparql: String): Iterator[List[String]] = {
+  def runQuery(url: String, baseURI: String)(sparql: String): Iterable[List[String]] = {
     val completeSPARQL = insertFromOnSPARQL(sparql, baseURI)
 //    println(completeSPARQL)
     Try({
@@ -122,16 +122,20 @@ object VirtuosoSchemaExtractor {
       exec.setTimeout(1, TimeUnit.MINUTES)
       val resultSet = exec.execSelect()
 
-      resultSet.asScala.map(result => {
+      val r = resultSet.asScala.map(result => {
         result.varNames().asScala.map(result.get(_).toString).toList
-      })
+      }).toList
+
+      exec.close()
+      r
     })
     match {
-      case Success(r) => r
+      case Success(r) =>
+        r
       case Failure(e) =>
         //        e.printStackTrace()
         logger.warn(s"Error processing query\n$completeSPARQL\n"+e.toString)
-        Nil.iterator
+        Nil
     }
   }
 
@@ -164,9 +168,9 @@ object VirtuosoSchemaExtractor {
 //    def labels(concept: String): Future[Iterator[List[String]]] = Future { runner(generateLabelsSPARQL(concept)) }
 //    def domains(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyDomainSPARQL(property)) }
 //    def ranges(property: String): Future[Iterator[List[String]]] = Future { runner(generatePropertyRangeSPARQL(property)) }
-    def labels(concept: String): Iterator[List[String]] =  runner(generateLabelsSPARQL(concept))
-    def domains(property: String): Iterator[List[String]] = runner(generatePropertyDomainSPARQL(property))
-    def ranges(property: String): Iterator[List[String]] = runner(generatePropertyRangeSPARQL(property))
+    def labels(concept: String): Iterable[List[String]] =  runner(generateLabelsSPARQL(concept))
+    def domains(property: String): Iterable[List[String]] = runner(generatePropertyDomainSPARQL(property))
+    def ranges(property: String): Iterable[List[String]] = runner(generatePropertyRangeSPARQL(property))
 
     val numberOfProperties = runCountQuery(endpointURL, graphURI)(propertiesCountSPARQL)
     logger.info(s"Distinct properties at the database: $numberOfProperties")
@@ -218,8 +222,8 @@ object VirtuosoSchemaExtractor {
       logger.info(s"Getting ranges to property $propertyURI")
       val r = ranges(property)
 
-      if(r.isEmpty) graph.addLink(Relation(propertyURI, typeURI, objectPropertyURI))
-      else graph.addLink(Relation(propertyURI, typeURI, dataTypeURI))
+      if(r.isEmpty) graph.addLink(Relation(propertyURI, typeURI, dataTypeURI))
+      else graph.addLink(Relation(propertyURI, typeURI, objectPropertyURI))
 
       r.foreach ( i => i.foreach(r =>{
         val uri = URI(r)
@@ -237,7 +241,6 @@ object VirtuosoSchemaExtractor {
         graph.addLink(Relation(propertyURI, rangeURI, uri))
       } ))
 
-
     }}
 
 //    Await.result(Future.sequence(operations), Duration.Inf)
@@ -253,7 +256,8 @@ object VirtuosoSchemaExtractor {
     println(graph.getNumberOfNodes)
     println(graph.getNumberOfEdges)
 
-    graph.save("dbpedia-extracted.nt")
+    graph.save("extracted-schema.nt")
+//    println(graph.toNTriple)
   }
 
 
