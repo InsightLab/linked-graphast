@@ -210,7 +210,7 @@ class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
        PathSingleEdge(new Edge(6l ,10l)))
     )
     )
-
+    println(MinimalPathsFinder(graph_multiple_different_paths, 0l, 10l))
     assert(sameElements(MinimalPathsFinder(graph_multiple_different_paths, 0l, 10l), path))
   }
 
@@ -355,7 +355,7 @@ class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
     assert(sameElements(MinimalPathsFinder(graph_with_redundance , 0l,4l) , path))
   }
   test("bugzila"){
-    var graph: LinkedGraph = NTripleParser.parse("/Users/joaocb/linked-graphast/src/main/resources/dbpedia.nt")
+    var graph: LinkedGraph = NTripleParser.parse("src/main/resources/dbpedia.nt")
     println(MinimalPathsFinder(graph,4730l,4325l))
   }
 
