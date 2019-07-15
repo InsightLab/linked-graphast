@@ -7,7 +7,9 @@ import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Relation}
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathEdge, PathMultipleEdge, PathSingleEdge}
-import scala.collection.mutable.Queue
+
+import scala.collection.mutable
+import scala.collection.mutable.{ListBuffer, Queue}
 
 
 /**
@@ -31,7 +33,7 @@ object MinimalPathsFinder extends MinimalPaths {
     * @return a list of lists for each variation of paths, it is represented by nodes
     */
 
-  private def buildPathNodes(source: Long, target: Long, parents: Map[Long, Set[Long]]): List[List[Long]] = {
+  private def buildPathNodes(source: Long, target: Long, parents: mutable.Map[Long, Set[Long]]): List[List[Long]] = {
 
     //base case, when the source was hit, the path ended
     if (source == target) {
@@ -63,26 +65,26 @@ object MinimalPathsFinder extends MinimalPaths {
 
   private def buildPathEdges(pathNodes : List[List[Long]] , G : Graph) : List[Path] = {
 
-    var pathEdges : List[Path]=  List()
+    var pathEdges : ListBuffer[Path]=  ListBuffer()
 
     for(path <- pathNodes){
 
-      var track : List[PathEdge] = List()
+      var track : ListBuffer[PathEdge] = ListBuffer()
 
       for(node <- 0 to path.length-2){
 
         val fromNode : Int = node + 1
 
         //collection of all edges that leave the node and is destined fromNode
-        var candidates: List[Edge] = List()
+        var candidates: ListBuffer[Edge] = ListBuffer()
 
-        var candidate : List[Edge] = G.getOutEdges(path(node)).asScala.toList
+        val candidate : List[Edge] = G.getOutEdges(path(node)).asScala.toList
 
         for(i <- candidate){
 
           if(i.getToNodeId == path(fromNode) || i.getFromNodeId == path(fromNode) ){
 
-            candidates = candidates ::: List(i)
+            candidates += i
 
           }
         }
@@ -94,20 +96,20 @@ object MinimalPathsFinder extends MinimalPaths {
         //if the resulting list size is greater than 1, this excerpt presents redundancy and must be represented by PathMultipleEdge
         if(candidates.length >1){
 
-          track = track ::: List(  PathMultipleEdge(candidates) )
+          track += PathMultipleEdge(candidates.toList)
 
         }else{
 
           //otherwise, it must be represented by PathSingleEdge
-          track = track ::: List( PathSingleEdge(candidates.head))
+          track += PathSingleEdge(candidates.head)
 
         }
       }
 
-      pathEdges = pathEdges :+ utils.Path( track )
+      pathEdges += utils.Path( track.toList )
     }
 
-    pathEdges
+    pathEdges.toList
   }
 
   /**
@@ -125,10 +127,10 @@ object MinimalPathsFinder extends MinimalPaths {
   def apply(G: Graph, source: Long, target: Long): List[Path] = {
 
 
-    var parents: Map[Long, Set[Long]] = Map()
+    var parents: mutable.Map[Long, Set[Long]] = mutable.Map()
     val nodes: Iterable[Node] = G.getNodes.asScala
-    var colors: Map[Long, Boolean] = Map()
-    var distances: Map[Long, Double] = Map()
+    var colors: mutable.Map[Long, Boolean] = mutable.Map()
+    var distances: mutable.Map[Long, Double] = mutable.Map()
 
 
     //initializing the search variables
@@ -141,7 +143,7 @@ object MinimalPathsFinder extends MinimalPaths {
     colors += source -> true
     distances += (source -> 0)
 
-    val NextNodesId: Queue[Long] = Queue(source)
+    val NextNodesId: mutable.Queue[Long] = mutable.Queue(source)
 
 
     while (NextNodesId.nonEmpty) {
@@ -156,20 +158,12 @@ object MinimalPathsFinder extends MinimalPaths {
 
       }{
 
-        var fromNodeId: Long = 0l
+        var fromNodeId: Long =
 
-        if(edge.isBidirectional){
-
-          if(edge.getToNodeId == dad){
-
-            fromNodeId = edge.getFromNodeId
-
-          }else{
-
-            fromNodeId = edge.getToNodeId
-
-          }
-        }
+          if(edge.isBidirectional)
+            if(edge.getToNodeId == dad) edge.getFromNodeId
+            else edge.getToNodeId
+          else edge.getFromNodeId
 
         //iteration over the edges that leave the node
         if (!colors(fromNodeId)) {
