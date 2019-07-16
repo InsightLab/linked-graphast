@@ -161,9 +161,9 @@ object MinimalPathsFinder extends MinimalPaths {
         var fromNodeId: Long =
 
           if(edge.isBidirectional)
-            if(edge.getToNodeId == dad) edge.getFromNodeId
-            else edge.getToNodeId
-          else edge.getFromNodeId
+            if(edge.getToNodeId == dad) edge.getToNodeId
+            else edge.getFromNodeId
+          else edge.getToNodeId
 
         //iteration over the edges that leave the node
         if (!colors(fromNodeId)) {
