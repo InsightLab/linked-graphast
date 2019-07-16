@@ -5,6 +5,7 @@ import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathMultipleEdge, PathSingleEdge}
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
+import scala.collection.JavaConverters._
 
 class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
 
@@ -210,7 +211,7 @@ class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
        PathSingleEdge(new Edge(6l ,10l)))
     )
     )
-    println(MinimalPathsFinder(graph_multiple_different_paths, 0l, 10l))
+
     assert(sameElements(MinimalPathsFinder(graph_multiple_different_paths, 0l, 10l), path))
   }
 
@@ -353,10 +354,6 @@ class MinimalPathsFinderTest extends FunSuite with BeforeAndAfterEach {
         PathMultipleEdge(List(new Edge(2,4) , new Edge(2,4) ) )  ) )
     )
     assert(sameElements(MinimalPathsFinder(graph_with_redundance , 0l,4l) , path))
-  }
-  test("bugzila"){
-    var graph: LinkedGraph = NTripleParser.parse("src/main/resources/dbpedia.nt")
-    println(MinimalPathsFinder(graph,4730l,4325l))
   }
 
 }
