@@ -17,57 +17,37 @@ import scala.util.{Failure, Success, Try}
 
 object VirtuosoSchemaExtractor {
 
-  private val propertiesCountSPARQL =
+  private val propertiesTriplePatterns =
     """
-      |select (count(distinct ?p) as ?c) where {
-      |  {
+      |{
       |    select ?p where {
       |      ?p a <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
-      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(!regex(lcase(str(?p)),"(wiki|[0-9]|\\(|\\)|\\'|\\+|\\,|\\;|\\&|\\!|\\?)"))
       |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |  UNION {
       |    select ?p where {
       |      ?p a <http://www.w3.org/2002/07/owl#DatatypeProperty> .
-      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(!regex(lcase(str(?p)),"(wiki|[0-9]|\\(|\\)|\\'|\\+|\\,|\\;|\\&|\\!|\\?)"))
       |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |  UNION {
       |    select ?p where {
       |      ?p a <http://www.w3.org/2002/07/owl#ObjectProperty> .
-      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(!regex(lcase(str(?p)),"(wiki|[0-9]|\\(|\\)|\\'|\\+|\\,|\\;|\\&|\\!|\\?)"))
       |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
-      |}
     """.stripMargin
 
+  private val propertiesCountSPARQL = s"select (count(distinct ?p) as ?c) where {$propertiesTriplePatterns}"
+
   private val propertiesOffsetSPARQL =
-    """
+    s"""
       |select distinct ?p where {
-      |  {
-      |     select ?p where {
-      |      ?p a <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
-      |      filter(!regex(lcase(str(?p)),"wiki"))
-      |      filter(regex(str(?p), "http://dbpedia.org/property"))
-      |    }
-      |  }
-      |  UNION {
-      |    select ?p where {
-      |      ?p a <http://www.w3.org/2002/07/owl#DatatypeProperty> .
-      |      filter(!regex(lcase(str(?p)),"wiki"))
-      |      filter(regex(str(?p), "http://dbpedia.org/property"))
-      |    }
-      |  }
-      |  UNION {
-      |    select ?p where {
-      |      ?p a <http://www.w3.org/2002/07/owl#ObjectProperty> .
-      |      filter(!regex(lcase(str(?p)),"wiki"))
-      |      filter(regex(str(?p), "http://dbpedia.org/property"))
-      |    }
-      |  }
+      |  $propertiesTriplePatterns
       |}
       |order by ?p
       |offset
