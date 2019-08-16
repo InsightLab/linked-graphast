@@ -23,16 +23,22 @@ object VirtuosoSchemaExtractor {
       |  {
       |    select ?p where {
       |      ?p a <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |  UNION {
       |    select ?p where {
       |      ?p a <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |  UNION {
       |    select ?p where {
       |      ?p a <http://www.w3.org/2002/07/owl#ObjectProperty> .
+      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |}
@@ -42,18 +48,24 @@ object VirtuosoSchemaExtractor {
     """
       |select distinct ?p where {
       |  {
-      |    select ?p where {
+      |     select ?p where {
       |      ?p a <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |  UNION {
       |    select ?p where {
       |      ?p a <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |  UNION {
       |    select ?p where {
       |      ?p a <http://www.w3.org/2002/07/owl#ObjectProperty> .
+      |      filter(!regex(lcase(str(?p)),"wiki"))
+      |      filter(regex(str(?p), "http://dbpedia.org/property"))
       |    }
       |  }
       |}
@@ -185,10 +197,15 @@ object VirtuosoSchemaExtractor {
         .toList
 
     logger.info(s"${properties.distinct.length} properties retrieved")
+    val writer = new PrintWriter(new File("properties.txt"))
+    properties.foreach(p => writer.write(p+"\n"))
+    writer.close()
 
     graph.addNodes(rdfPropertyURI, classURI, dataTypeURI, objectPropertyURI)
 
-    properties.foreach { property => {
+    properties
+      .take(0)
+      .foreach { property => {
       val propertyURI = URI(property)
       this.synchronized({
         graph.addNode(propertyURI)
