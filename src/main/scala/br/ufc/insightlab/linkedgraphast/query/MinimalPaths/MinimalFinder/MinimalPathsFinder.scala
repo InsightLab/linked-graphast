@@ -169,7 +169,7 @@ object MinimalPathsFinder extends MinimalPaths {
             fromNodeId = edge.getToNodeId
 
           }
-        }
+        } else fromNodeId = edge.getToNodeId
 
         //iteration over the edges that leave the node
         if (!colors(fromNodeId)) {
