@@ -1,12 +1,11 @@
 package br.ufc.insightlab.linkedgraphast.query.MinimalPaths.MinimalFinder
 
-import scala.collection.JavaConverters._
 import br.ufc.insightlab.graphast.model.{Edge, Graph, Node}
-import br.ufc.insightlab.graphast.query.shortestpath.DijkstraStrategy
-import br.ufc.insightlab.linkedgraphast.model.link.{Attribute, Relation}
-import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils
 import br.ufc.insightlab.linkedgraphast.query.MinimalPaths.utils.{Path, PathEdge, PathMultipleEdge, PathSingleEdge}
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.collection.mutable.Queue
 
 
@@ -31,7 +30,7 @@ object MinimalPathsFinder extends MinimalPaths {
     * @return a list of lists for each variation of paths, it is represented by nodes
     */
 
-  private def buildPathNodes(source: Long, target: Long, parents: Map[Long, Set[Long]]): List[List[Long]] = {
+  private def buildPathNodes(source: Long, target: Long, parents: mutable.Map[Long, Set[Long]]): List[List[Long]] = {
 
     //base case, when the source was hit, the path ended
     if (source == target) {
@@ -125,10 +124,10 @@ object MinimalPathsFinder extends MinimalPaths {
   def apply(G: Graph, source: Long, target: Long): List[Path] = {
 
 
-    var parents: Map[Long, Set[Long]] = Map()
+    var parents: mutable.Map[Long, Set[Long]] = mutable.Map()
     val nodes: Iterable[Node] = G.getNodes.asScala
-    var colors: Map[Long, Boolean] = Map()
-    var distances: Map[Long, Double] = Map()
+    var colors: mutable.Map[Long, Boolean] = mutable.Map()
+    var distances: mutable.Map[Long, Double] = mutable.Map()
 
 
     //initializing the search variables

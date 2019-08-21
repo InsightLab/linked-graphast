@@ -21,13 +21,13 @@ class VonQBESparqlBuilder(graph: LinkedGraph, nerClassifier: Option[NERClassifie
       Some(new NERQueryBuilder(nerClassifier.get, new PermutedSimilarity(JaroWinkler)))
     else None
 
-  def generateSPARQL(text: String, withNER: Boolean = false): String = {
+  def generateSPARQL(text: String, withNER: Boolean = false, withMinimalPaths: Boolean = false): String = {
 
-    if(withNER && ner.isDefined) ner.get(graph)(text)
+    if(withNER && ner.isDefined) ner.get(graph, withMinimalPaths)(text)
     else{
       val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(text)
 
-      val fragment = SteinerTree(graph)(nodes.toList)
+      val fragment = SteinerTree(graph, withMinimalPaths)(nodes.toList)
 
       SchemaSPARQLQueryBuilder(fragment,filters, graph)
 //      MultipleSchemaSPARQLQueryBuilder(List((fragment, filters)), graph)

@@ -49,18 +49,19 @@ object QALDEvaluation{
       .map(e =>
         Query((e \ "id").as[Int], (e \ "string").as[String], (e \ "sparql" \ "sparql").as[String])
       )
+//    .filter(d => Set[Int](6,48,18,72,102,117,124,134,135,199,221,122,150,167)(d.id))
 
 
   def runExperiments(generateSPARQL: Boolean, generateResults: Boolean, computeMetrics: Boolean): Unit = {
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
     val QB = new VonQBESparqlBuilder(graph, Wikifier)
 
-    if(generateResults){
-      new File(basePath)
-        .listFiles()
-        .filter(_.isDirectory)
-        .foreach(FileUtils.deleteDirectory)
-    }
+//    if(generateResults){
+//      new File(basePath)
+//        .listFiles()
+//        .filter(_.isDirectory)
+//        .foreach(FileUtils.deleteDirectory)
+//    }
 
     val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
       if(!computeMetrics) logger.info(s"Processing query ${q.id}: ${q.text}")
@@ -71,7 +72,7 @@ object QALDEvaluation{
 
       val query =
         if(generateSPARQL) {
-          val query = QB.generateSPARQL(q.text, false)
+          val query = QB.generateSPARQL(q.text)
           val writer = new PrintWriter(new File(path+"/sparql-generated-simple.txt"))
           writer.write(query)
           writer.close()
@@ -81,7 +82,7 @@ object QALDEvaluation{
 
       val queryNER =
         if(generateSPARQL) {
-          val query = QB.generateSPARQL(q.text, true)
+          val query = QB.generateSPARQL(q.text, withNER = true, withMinimalPaths = true)
           val writer = new PrintWriter(new File(path+"/sparql-generated-ner.txt"))
           writer.write(query)
           writer.close()
@@ -106,15 +107,15 @@ object QALDEvaluation{
 
         if(recall > 0 || precision > 0 || recallNER > 0 || precisionNER > 0){
           logger.info(s"query ${q.id}: ${q.text}")
-          logger.info(s"Recall value without NER: $recall | Precision value without NER: $precision")
-          logger.info(s"Recall value with NER: $recallNER | Precision value with NER: $precisionNER")
+          logger.info(s"Von-QBE recall: $recall | Von-QBE precision: $precision")
+          logger.info(s"Von-QBNER recall: $recallNER | Von-QBNER precision: $precisionNER")
         }
         ((recall, precision), (recallNER, precisionNER))
       } else ((0.0,0.0), (0.0,0.0))
 
     }
 
-    if(computeMetrics){
+    if(computeMetrics && metrics.nonEmpty){
       println("\n------------------------------------------\n")
       logger.info(s"Processed queries: ${metrics.size}")
       val nonZero: Double = metrics.count(x => x._1._1 > 0 || x._1._2 > 0 || x._2._1 > 0 || x._2._2 > 0)
@@ -124,18 +125,18 @@ object QALDEvaluation{
       val meanRecall = (sums._1)._1 / metrics.size
       val meanPrecision = (sums._1)._2 / metrics.size
 //      logger.info(s"Mean recall without NER: $meanRecall | Mean precision without NER: $meanPrecision")
-      logger.info(s"Mean non-zero recall without NER: ${(sums._1)._1/nonZero} | Mean non-zero precision without NER: ${(sums._1)._2/nonZero}")
+      logger.info(s"Von-QBE mean recall: ${(sums._1)._1/nonZero} | Von-QBE mean precision: ${(sums._1)._2/nonZero}")
 
       val meanRecallNER = (sums._2)._1 / metrics.size
       val meanPrecisionNER = (sums._2)._2 / metrics.size
 //      logger.info(s"Mean recall with NER: $meanRecallNER | Mean precision with NER: $meanPrecisionNER")
-      logger.info(s"Mean non-zero recall with NER: ${(sums._2)._1/nonZero} | Mean non-zero precision with NER: ${(sums._2)._2/nonZero}")
+      logger.info(s"Von-QBNER mean recall: ${(sums._2)._1/nonZero} | Von-QBNER mean precision: ${(sums._2)._2/nonZero}")
     }
 
   }
 
   def main(args: Array[String]): Unit = {
-    val metrics = true
+    val metrics = false
     runExperiments(!metrics, !metrics, metrics)
   }
 

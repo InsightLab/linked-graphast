@@ -2,7 +2,7 @@ package br.ufc.insightlab.linkedgraphast.modules.NER.wikifier
 
 import br.ufc.insightlab.linkedgraphast.modules.NER.NERClassifier
 import play.api.libs.json.{JsArray, JsObject, Json}
-import scalaj.http.Http
+import scalaj.http.{Http, HttpOptions}
 
 object Wikifier extends NERClassifier{
 
@@ -11,11 +11,13 @@ object Wikifier extends NERClassifier{
   private case class Annotation(text: String, types: List[String])
 
   def classify(text: String): List[(String, List[String])] = {
-    val response: String = Http("http://www.wikifier.org/annotate-article")
+    val request = Http("http://www.wikifier.org/annotate-article")
       .param("userKey",wikifierToken)
       .param("text", text)
-      .asString
-      .body
+      .option(HttpOptions.connTimeout(50000))
+      .option(HttpOptions.readTimeout(50000))
+
+      val response = request.asString.body
 
 //    println(response)
 
