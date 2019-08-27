@@ -9,7 +9,7 @@ import br.ufc.insightlab.linkedgraphast.metrics.{Precision, Recall}
 import br.ufc.insightlab.linkedgraphast.modules.NER.figer.Figer
 import br.ufc.insightlab.linkedgraphast.modules.NER.wikifier.Wikifier
 import br.ufc.insightlab.linkedgraphast.modules.vonqbe.VonQBESparqlBuilder
-import br.ufc.insightlab.linkedgraphast.parser.NTripleParser
+import br.ufc.insightlab.linkedgraphast.parser.{JenaRdfParser, NTripleParser}
 import org.apache.commons.io.FileUtils
 import org.slf4j.LoggerFactory
 import play.api.libs.json.{JsArray, Json, Reads}
@@ -53,7 +53,8 @@ object QALDEvaluation{
 
 
   def runExperiments(generateSPARQL: Boolean, generateResults: Boolean, computeMetrics: Boolean): Unit = {
-    val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
+//    val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
+    val graph = JenaRdfParser.parse("src/main/resources/dbpedia.nt")
     val QB = new VonQBESparqlBuilder(graph, Wikifier)
 
     if(generateResults){

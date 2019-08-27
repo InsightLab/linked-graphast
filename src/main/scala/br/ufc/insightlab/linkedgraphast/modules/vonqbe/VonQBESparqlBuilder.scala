@@ -26,7 +26,7 @@ class VonQBESparqlBuilder(graph: LinkedGraph, nerClassifier: Option[NERClassifie
     if(withNER && ner.isDefined) ner.get(graph, withMinimalPaths)(text)
     else{
       val (nodes,filters) = new SimilarityKeywordMatcherOptimizedWithFilters(new PermutedSimilarity(JaroWinkler))(graph)(text)
-      println(nodes)
+//      println(nodes)
       val fragment = SteinerTree(graph, withMinimalPaths)(nodes.toList)
 
       SchemaSPARQLQueryBuilder(fragment,filters, graph)

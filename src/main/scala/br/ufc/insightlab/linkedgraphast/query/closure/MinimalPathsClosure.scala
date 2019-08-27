@@ -34,16 +34,16 @@ object MinimalPathsClosure extends Closure {
 
       var varPropertiesCount = 0
       for ((n1, n2) <- pairNodes) {
-        println(s"Computing path from ${g.getNode(n1)} to ${g.getNode(n2)}")
+//        println(s"Computing path from ${g.getNode(n1)} to ${g.getNode(n2)}")
 
         val paths = MinimalPathsFinder(g, n1, n2).filterNot(_.cost.toString == "Infinity")
-        if(paths.nonEmpty) {
-          println(s"${paths.size} paths found with cost: ${paths.head.cost}")
-        }
+//        if(paths.nonEmpty) {
+//          println(s"${paths.size} paths found with cost: ${paths.head.cost}")
+//        }
 
         val compressedPaths = (for (path <- paths) yield {
           val compressedPath = compressPath(path, varPropertiesCount)
-          println(s"\nPath: $path\n\nCompressed Path: $compressedPath\n--------------------")
+//          println(s"\nPath: $path\n\nCompressed Path: $compressedPath\n--------------------")
           compressedPath
         }).distinct
 

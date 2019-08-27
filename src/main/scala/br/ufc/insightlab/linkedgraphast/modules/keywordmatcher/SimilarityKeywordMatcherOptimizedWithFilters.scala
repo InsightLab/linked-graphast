@@ -29,7 +29,7 @@ class SimilarityKeywordMatcherOptimizedWithFilters(metric: SimilarityMetric, thr
     var mostSimilars = subsequences.map(l => mutable.Seq.fill[(Node, Double)](l.size)((new Node(-1),0)))
 
     for{
-      literal <- graph.getLiterals
+      literal <- graph.getLiterals//.filter(_.value.endsWith("@en"))
       cleanLiteral = literal.value.split("\\^\\^<").head.toLowerCase.split("@").head
       i <- subsequences.indices
       j <- subsequences(i).indices

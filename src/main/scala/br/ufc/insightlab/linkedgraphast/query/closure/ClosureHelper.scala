@@ -19,7 +19,7 @@ object ClosureHelper {
             (l.uri.endsWith("#range") && t.uri.contains("XMLSchema#")) ||
             l.uri.contains("/owl#")
           ) {
-            link.setWeight(Double.MaxValue)
+            link.setWeight(100)
 //            counts += "schema/owl" -> (counts("schema/owl") + 1)
           }
           else if (l.uri.contains("rdf-schema#subClassOf")) {
