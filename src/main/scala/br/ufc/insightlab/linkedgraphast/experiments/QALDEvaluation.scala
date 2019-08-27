@@ -49,19 +49,19 @@ object QALDEvaluation{
       .map(e =>
         Query((e \ "id").as[Int], (e \ "string").as[String], (e \ "sparql" \ "sparql").as[String])
       )
-//    .filter(d => Set[Int](6,48,18,72,102,117,124,134,135,199,221,122,150,167)(d.id))
+    .filter(d => Set[Int](6,48,18,72,102,117,124,134,135,199,221,122,150,167)(d.id))
 
 
   def runExperiments(generateSPARQL: Boolean, generateResults: Boolean, computeMetrics: Boolean): Unit = {
     val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
     val QB = new VonQBESparqlBuilder(graph, Wikifier)
 
-//    if(generateResults){
-//      new File(basePath)
-//        .listFiles()
-//        .filter(_.isDirectory)
-//        .foreach(FileUtils.deleteDirectory)
-//    }
+    if(generateResults){
+      new File(basePath)
+        .listFiles()
+        .filter(_.isDirectory)
+        .foreach(FileUtils.deleteDirectory)
+    }
 
     val metrics = for(q <- data.filterNot(d => d.sparql.contains("ASK WHERE") || d.sparql.contains("ASK \nWHERE"))) yield {
       if(!computeMetrics) logger.info(s"Processing query ${q.id}: ${q.text}")
@@ -136,8 +136,8 @@ object QALDEvaluation{
   }
 
   def main(args: Array[String]): Unit = {
-    val metrics = false
-    runExperiments(!metrics, !metrics, metrics)
+    val metrics = true
+    runExperiments(metrics, metrics, metrics)
   }
 
 }

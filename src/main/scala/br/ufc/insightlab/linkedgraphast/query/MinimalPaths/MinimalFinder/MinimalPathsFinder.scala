@@ -145,69 +145,65 @@ object MinimalPathsFinder extends MinimalPaths {
 
     while (NextNodesId.nonEmpty) {
 
-      val dad: Long = NextNodesId.dequeue
+      val node: Long = NextNodesId.dequeue
 
 
       //iteration over the edges that leave the node
       for {
 
-        edge <- G.getOutEdges(dad).asScala
+        edge <- G.getOutEdges(node).asScala
 
       }{
 
-        var fromNodeId: Long = 0l
-
-        if(edge.isBidirectional){
-
-          if(edge.getToNodeId == dad){
-
-            fromNodeId = edge.getFromNodeId
-
-          }else{
-
-            fromNodeId = edge.getToNodeId
-
-          }
-        } else fromNodeId = edge.getToNodeId
+        val neighborId: Long =
+          if(edge.isBidirectional)
+            if(edge.getToNodeId == node) edge.getFromNodeId
+            else edge.getToNodeId
+          else edge.getToNodeId
 
         //iteration over the edges that leave the node
-        if (!colors(fromNodeId)) {
+        if (!colors(neighborId)) {
 
-          val widget: Double = distances(dad) + edge.getWeight
+          val widget: Double = distances(node) + edge.getWeight
 
           //if the weight found is less than equal to the lowest already listed
-          if (widget <= distances(fromNodeId)) {
+          if (widget <= distances(neighborId)) {
 
             //security check to prevent the target being a part of some way minimum path
-            if (fromNodeId != target) {
+            if (neighborId != target) {
 
-              NextNodesId.enqueue(fromNodeId)
+              NextNodesId.enqueue(neighborId)
 
             }
 
             //if the distance found was equal to less cataloged, one should register the minimal father of this node
-            if(distances(fromNodeId) == widget){
+            if(distances(neighborId) == widget){
 
-              parents += fromNodeId -> (parents(fromNodeId)+dad)
+              parents += neighborId -> (parents(neighborId)+node)
 
               //otherwise, we have a better minimal parent and the others should be discarded
             }else{
 
-              parents += fromNodeId -> Set(dad)
+              parents += neighborId -> Set(node)
 
-              distances += fromNodeId -> widget
+              distances += neighborId -> widget
             }
           }
         }
       }
 
       //marking the node as visited
-      colors += dad -> true
+      colors += node -> true
 
     }
 
     //mounting the edge path
-    buildPathEdges(buildPathNodes(source, target, parents) , G)
+//    buildPathEdges(buildPathNodes(source, target, parents) , G)
+    buildPathNodes(source, target, parents)
+//      .map(_.map(G.getNode))
+      .map(nodes => utils.Path(nodes.sliding(2,1).map{
+        case n1 :: n2 :: _ => PathSingleEdge(G.getEdge(n1,n2))
+      } toList))
 
   }
 
