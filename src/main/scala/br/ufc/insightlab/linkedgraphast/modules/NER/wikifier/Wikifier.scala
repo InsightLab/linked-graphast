@@ -6,7 +6,7 @@ import scalaj.http.{Http, HttpOptions}
 
 object Wikifier extends NERClassifier{
 
-  val wikifierToken: String = sys.env("wikifierToken")
+  lazy val wikifierToken: String = sys.env("wikifierToken")
 
   private case class Annotation(text: String, types: List[String])
 
