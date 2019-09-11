@@ -6,10 +6,11 @@ import br.ufc.insightlab.linkedgraphast.parser.{JenaRdfParser, NTripleParser}
 
 object Experiment extends App {
 
-  val graph = JenaRdfParser.parse("src/main/resources/dbpedia.nt")
+//  val graph = JenaRdfParser.parse("src/main/resources/dbpedia.nt")
+  val graph = NTripleParser.parse("/Users/lucasperes/Desktop/dbpedia-extracted-schema.nt")
 
   val searches = List(
-  "Which Countries Have Places With More Than Two Caves?"
+  "Which ships were called after Benjamin Franklin?"
   )
 
   val useNer = true
