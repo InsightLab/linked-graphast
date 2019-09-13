@@ -50,7 +50,7 @@ object QALDEvaluation{
         Query((e \ "id").as[Int], (e \ "string").as[String], (e \ "sparql" \ "sparql").as[String])
       )
 //    .filter(d => Set[Int](48,72,102,117,124,137,221)(d.id))
-    .filter(d => Set[Int](48)(d.id))
+//    .filter(d => Set[Int](72)(d.id))
 
       val graph = NTripleParser.parse("src/main/resources/dbpedia.nt")
 //  val graph = JenaRdfParser.parse("src/main/resources/dbpedia.nt")
@@ -60,7 +60,8 @@ object QALDEvaluation{
     metricsWriter.println("theta,answered questions,von-qbe recall,von-qbe precision,von-qbner recall,von-qbnerprecision")
 
     for(theta <- thresholds){
-      logger.info(s"Running experiments with similarity threshold $theta")
+      logger.info(s"Running experiments with similarity threshold $theta\n\n")
+
       val QB = new VonQBESparqlBuilder(graph, theta, Wikifier)
 
       if(generateResults){
@@ -141,14 +142,17 @@ object QALDEvaluation{
 
         metricsWriter.println(s"$theta,$nonZero,$meanRecall,$meanPrecision,$meanRecallNER,$meanPrecisionNER")
 
-        println("\n\n###################\n\n")
+//        println("\n\n###################\n\n")
       }
     }
     metricsWriter.close()
   }
 
   def main(args: Array[String]): Unit = {
-    runExperiments(generateSPARQL = true, generateResults =true, computeMetrics = true, List(0.5, 0.6, 0.7, 0.8, 0.9, 1))
+    runExperiments(generateSPARQL = true, generateResults =true, computeMetrics = true,
+      List(0.5, 0.6, 0.7, 0.8, 0.9, 1)
+//      List(1)
+    )
   }
 
 }

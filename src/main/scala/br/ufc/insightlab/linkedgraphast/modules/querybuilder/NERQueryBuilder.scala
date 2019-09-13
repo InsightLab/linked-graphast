@@ -57,6 +57,7 @@ class NERQueryBuilder(nerClassifier: NERClassifier, metric: SimilarityMetric, th
     if(textsCandidates.size == 1){
       val (nodes,filters) = matcher(graph)(textsCandidates.head)
 //      println(nodes)
+//      println(filters)
       val fragment = SteinerTree(graph, withMinimalPaths)(nodes.toList)
 //      println(fragment.linksAsString())
       return SchemaSPARQLQueryBuilder(fragment, filters, graph)

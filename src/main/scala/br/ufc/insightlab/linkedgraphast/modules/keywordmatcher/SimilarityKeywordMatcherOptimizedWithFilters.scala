@@ -36,7 +36,7 @@ class SimilarityKeywordMatcherOptimizedWithFilters(metric: SimilarityMetric, thr
     }{
       val s: Double =
         if(filterOccurence(i)(j).nonEmpty)
-          metric(cleanLiteral,filterPattern.replaceAllIn(subsequences(i)(j),""))
+          metric(cleanLiteral,filterPattern.replaceAllIn(subsequences(i)(j),"").removePunctuation)
         else metric(cleanLiteral,subsequences(i)(j))
       if(s >= threshold && mostSimilars(i)(j)._2 < s) {
         mostSimilars(i)(j) = (literal, s)
