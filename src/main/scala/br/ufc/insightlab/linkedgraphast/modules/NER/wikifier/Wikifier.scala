@@ -17,29 +17,29 @@ object Wikifier extends NERClassifier{
       .option(HttpOptions.connTimeout(50000))
       .option(HttpOptions.readTimeout(50000))
 
-      val response = request.asString.body
+    val response = request.asString.body
 
-//    println(response)
+    //    println(response)
 
     val annotations: Seq[Annotation] = Json.parse(response)
-        .as[JsObject]
-        .value("annotations")
-        .as[JsArray]
-        .value.map(ann =>
-          ((ann \ "support").as[JsArray], (ann \ "dbPediaTypes").as[List[String]])
-        )
-        .flatMap{
-          case (supports, types) =>
-            val mostConfident = supports.value
-              .map(sup => ((sup \ "chFrom").as[Int], (sup \ "chTo").as[Int], (sup \ "prbConfidence").as[Double], types))
-              .maxBy(_._3)
+      .as[JsObject]
+      .value("annotations")
+      .as[JsArray]
+      .value.map(ann =>
+      ((ann \ "support").as[JsArray], (ann \ "dbPediaTypes").as[List[String]])
+    )
+      .flatMap{
+        case (supports, types) =>
+          val mostConfident = supports.value
+            .map(sup => ((sup \ "chFrom").as[Int], (sup \ "chTo").as[Int], (sup \ "prbConfidence").as[Double], types))
+            .maxBy(_._3)
 
-            if(mostConfident._3 > 0.6)
-              List(Annotation(text.substring(mostConfident._1, mostConfident._2+1), types))
-            else Nil
-        }
+          if(mostConfident._3 > 0.6)
+            List(Annotation(text.substring(mostConfident._1, mostConfident._2+1), types))
+          else Nil
+      }
 
-//    println(annotations.mkString("\n"))
+    //    println(annotations.mkString("\n"))
 
     annotations
       .map(a => (a.text, a.types))
