@@ -1,5 +1,6 @@
 package br.ufc.insightlab.linkedgraphast.model.graph
 
+import java.io.{File, PrintWriter}
 import java.lang
 import java.util.stream.StreamSupport
 
@@ -225,6 +226,38 @@ class LinkedGraph(structure: GraphStructure = new DefaultGraphStructure()) exten
     val e2 = super.getEdge(link.target.getId, link.source.getId)
 
     null != e1 || null != e2
+  }
+
+  def linksAsString(sep: String = "\n"): String =
+    getLinksAsStream.map(_.toString).mkString(sep)
+
+  private def fixLiteralString(literal: String): String = {
+    val lang = "@"+literal.reverse.takeWhile(!_.equals('@')).reverse
+    "\""+literal.replace(lang,"")+"\""+lang
+  }
+
+  def toNTriple: String =
+    getLinksAsStream
+    .map{
+      case Attribute(s,p,o) =>
+        s"<${s.uri}> <${p.uri}> ${fixLiteralString(o.value)} ."
+      case Relation(s,p,o) =>
+        s"<${s.uri}> <${p.uri}> <${o.uri}> ."
+    }
+    .mkString("\n")
+
+  def save(filePath: String): Unit = {
+    val wr = new PrintWriter(new File(filePath))
+
+    this.getLinksAsStream
+      .foreach{
+        case Attribute(s,p,o) =>
+          wr.write(s"<${s.uri}> <${p.uri}> ${fixLiteralString(o.value)} .\n")
+        case Relation(s,p,o) =>
+          wr.write(s"<${s.uri}> <${p.uri}> <${o.uri}> .\n")
+      }
+
+    wr.close()
   }
 
 }

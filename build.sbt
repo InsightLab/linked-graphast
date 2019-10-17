@@ -1,14 +1,28 @@
 organization := "br.ufc.insightlab"
 name := "linked-graphast"
-version := "1.0.0"
+version := "1.2.0"
 
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 publishConfiguration := publishConfiguration.value.withOverwrite(true)
 
 
 resolvers += Resolver.mavenLocal
+resolvers += "Insight Lab github Maven2 Repository" at "http://www.insightlab.ufc.br/maven-repo/"
 
 libraryDependencies += "br.ufc.insightlab" % "graphast-core" % "1.1.0"
+libraryDependencies += "br.ufc.insightlab" % "ror" % "1.0.0"
+
+libraryDependencies += "org.wildfly.swarm" % "teiid-jdbc" % "2018.5.0"
+libraryDependencies += "org.teiid" % "teiid-client" % "10.2.0"
+libraryDependencies += "org.teiid" % "teiid-common-core" % "10.2.0"
+libraryDependencies += "org.teiid" % "teiid-api" % "10.2.0"
+
+libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.10"
+libraryDependencies += "org.scalaj" %% "scalaj-http" % "2.3.0"
+
+
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.6"
+
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
 libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.7.25"
@@ -30,8 +44,9 @@ libraryDependencies += "org.neo4j" % "neo4j-cypher" % "3.4.7"
 
 libraryDependencies += "com.carrotsearch" % "hppc" % "0.8.1"
 
+libraryDependencies += "edu.washington.cs" % "figer_2.10" % "0"
+
 
 scalaVersion := "2.11.8"
 
-assemblyJarName in assembly := "linked-graphast.jar"
-
+mappings in (Compile, packageBin) ~= { _.filter(!_._1.getName.endsWith(".model.gz")) }

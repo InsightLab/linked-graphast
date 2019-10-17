@@ -1,0 +1,1 @@
+find the movie title and actor birth name from Love movies where the actor is also a film director

@@ -1,0 +1,6 @@
+SELECT  ?TVSeries ?TVSeries_title
+WHERE
+  { FILTER regex(lcase(str(?TVSeries_title)), "^24$", "i")
+    ?TVSeries  a                    <http://www.movieontology.org/2009/10/01/movieontology.owl#TVSeries> ;
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?TVSeries_title
+  }

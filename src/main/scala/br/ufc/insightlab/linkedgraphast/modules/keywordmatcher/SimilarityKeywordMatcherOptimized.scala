@@ -6,7 +6,8 @@ import br.ufc.insightlab.linkedgraphast.model.graph.LinkedGraph
 
 import scala.collection.mutable
 
-class SimilarityKeywordMatcherOptimized (metric: SimilarityMetric, threshold: Double = 0.9) extends KeywordMatcher {
+class SimilarityKeywordMatcherOptimized
+(metric: SimilarityMetric, threshold: Double = 0.9) extends KeywordMatcher {
 
   require(threshold <= 1.0)
   require(threshold >= 0.0)
@@ -25,7 +26,7 @@ class SimilarityKeywordMatcherOptimized (metric: SimilarityMetric, threshold: Do
 
     for{
       literal <- graph.getLiterals
-      cleanLiteral = literal.value.split("\\^\\^<").head.toLowerCase
+      cleanLiteral = literal.value.split("\\^\\^<").head.toLowerCase.split("@").head
       i <- subsequences.indices
       j <- subsequences(i).indices
     }{
@@ -34,6 +35,7 @@ class SimilarityKeywordMatcherOptimized (metric: SimilarityMetric, threshold: Do
         mostSimilars(i)(j) = (literal, s)
       }
     }
+
 
 
     var i = 0

@@ -1,0 +1,7 @@
+PREFIX : <http://www.movieontology.org/2009/11/09/movieontology.owl#>
+PREFIX dbpedia: <http://dbpedia.org/ontology/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT $x
+WHERE {
+   $x a dbpedia:Writer. $x dbpedia:birthName "Barker, Clive"^^xsd:string
+}

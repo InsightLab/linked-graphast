@@ -1,0 +1,6 @@
+SELECT  ?Movie ?Movie_title
+WHERE
+  { FILTER regex(lcase(str(?Movie_title)), "^finding nemo$", "i")
+    ?Movie  a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> ;
+            <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title
+  }

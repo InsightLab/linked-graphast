@@ -1,0 +1,6 @@
+SELECT  ?Actress ?Actress_birthName
+WHERE
+  { FILTER regex(lcase(str(?Actress_birthName)), "^pfeiffer, michelle$", "i")
+    ?Actress  a                     <http://www.movieontology.org/2009/11/09/movieontology.owl#Actress> ;
+              <http://dbpedia.org/ontology/birthName>  ?Actress_birthName
+  }

@@ -1,0 +1,19 @@
+SELECT  ?Production_Company ?Movie ?Eastern_Asia ?produced ?Movie_title ?Production_Company_companyName ?Movie_productionStartYear
+WHERE
+  { FILTER ( ?Movie_productionStartYear >= "2000"^^<http://www.w3.org/2001/XMLSchema#int> )
+    FILTER ( ?Movie_productionStartYear <= "2010"^^<http://www.w3.org/2001/XMLSchema#int> )
+    ?Production_Company
+              a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Production_Company> .
+    ?Movie    a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Movie> .
+    ?Production_Company
+              <http://www.movieontology.org/2009/10/01/movieontology.owl#produced>  ?Movie .
+    ?Eastern_Asia
+              a                     <http://www.movieontology.org/2009/10/01/movieontology.owl#Eastern_Asia> .
+    ?Production_Company
+              <http://www.movieontology.org/2009/11/09/movieontology.owl#hasCompanyLocation>  ?Eastern_Asia .
+    ?produced  <http://www.movieontology.org/2009/10/01/movieontology.owl#produced>  ?Movie .
+    ?Movie    <http://www.movieontology.org/2009/10/01/movieontology.owl#title>  ?Movie_title .
+    ?Production_Company
+              <http://www.movieontology.org/2009/11/09/movieontology.owl#companyName>  ?Production_Company_companyName .
+    ?Movie    <http://dbpedia.org/ontology/productionStartYear>  ?Movie_productionStartYear
+  }

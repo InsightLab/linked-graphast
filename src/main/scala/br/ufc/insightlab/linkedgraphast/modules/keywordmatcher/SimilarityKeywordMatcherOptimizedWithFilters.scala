@@ -29,14 +29,14 @@ class SimilarityKeywordMatcherOptimizedWithFilters(metric: SimilarityMetric, thr
     var mostSimilars = subsequences.map(l => mutable.Seq.fill[(Node, Double)](l.size)((new Node(-1),0)))
 
     for{
-      literal <- graph.getLiterals
+      literal <- graph.getLiterals//.filter(_.value.endsWith("@en"))
       cleanLiteral = literal.value.split("\\^\\^<").head.toLowerCase.split("@").head
       i <- subsequences.indices
       j <- subsequences(i).indices
     }{
       val s: Double =
         if(filterOccurence(i)(j).nonEmpty)
-          metric(cleanLiteral,filterPattern.replaceAllIn(subsequences(i)(j),""))
+          metric(cleanLiteral,filterPattern.replaceAllIn(subsequences(i)(j),"").removePunctuation)
         else metric(cleanLiteral,subsequences(i)(j))
       if(s >= threshold && mostSimilars(i)(j)._2 < s) {
         mostSimilars(i)(j) = (literal, s)
