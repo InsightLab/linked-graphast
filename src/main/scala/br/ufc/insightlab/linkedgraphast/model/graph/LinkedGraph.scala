@@ -1,5 +1,6 @@
 package br.ufc.insightlab.linkedgraphast.model.graph
 
+import java.io.{File, PrintWriter}
 import java.lang
 import java.util.stream.StreamSupport
 
@@ -244,5 +245,19 @@ class LinkedGraph(structure: GraphStructure = new DefaultGraphStructure()) exten
         s"<${s.uri}> <${p.uri}> <${o.uri}> ."
     }
     .mkString("\n")
+
+  def save(filePath: String): Unit = {
+    val wr = new PrintWriter(new File(filePath))
+
+    this.getLinksAsStream
+      .foreach{
+        case Attribute(s,p,o) =>
+          wr.write(s"<${s.uri}> <${p.uri}> ${fixLiteralString(o.value)} .\n")
+        case Relation(s,p,o) =>
+          wr.write(s"<${s.uri}> <${p.uri}> <${o.uri}> .\n")
+      }
+
+    wr.close()
+  }
 
 }

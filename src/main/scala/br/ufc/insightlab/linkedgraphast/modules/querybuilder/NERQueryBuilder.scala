@@ -41,7 +41,7 @@ class NERQueryBuilder(nerClassifier: NERClassifier, metric: SimilarityMetric, th
       !l.uri.uri.contains("#range") && !l.uri.uri.contains("#domain")
     )
 
-  def apply(graph: LinkedGraph)(text: String): String = {
+  def apply(graph: LinkedGraph, withMinimalPaths: Boolean = false)(text: String): String = {
 
 
     val capText = filterPattern.replaceAllIn(text.split(" ").map(_.capitalize).mkString(" "),"")
@@ -51,12 +51,14 @@ class NERQueryBuilder(nerClassifier: NERClassifier, metric: SimilarityMetric, th
     logger.debug(s"\n${entities.size} entities found:\n${entities.mkString(" ")}")
 
     val textsCandidates = generateCombinations(capText, entities)
+//    println(textsCandidates)
 
     logger.debug(s"\n${textsCandidates.size} candidate texts:\n${textsCandidates.mkString("\n")}")
     if(textsCandidates.size == 1){
       val (nodes,filters) = matcher(graph)(textsCandidates.head)
-//      println(nodes, filters)
-      val fragment = SteinerTree(graph)(nodes.toList)
+//      println(nodes)
+//      println(filters)
+      val fragment = SteinerTree(graph, withMinimalPaths)(nodes.toList)
 //      println(fragment.linksAsString())
       return SchemaSPARQLQueryBuilder(fragment, filters, graph)
     }
