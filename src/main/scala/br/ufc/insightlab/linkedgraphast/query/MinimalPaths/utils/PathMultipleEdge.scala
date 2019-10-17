@@ -13,7 +13,8 @@ import br.ufc.insightlab.graphast.model.Edge
 
 case class PathMultipleEdge(edges: List[Edge]) extends PathEdge {
 
-
   override def toString: String = edges.mkString("{ "," , "," }")
+
+  override def getOneEdge: Edge = edges.head
 
 }

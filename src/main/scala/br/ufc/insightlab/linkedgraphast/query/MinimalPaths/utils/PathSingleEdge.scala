@@ -14,5 +14,5 @@ case class PathSingleEdge(edge: Edge) extends PathEdge {
 
   override def toString: String = edge.toString
 
-
+  override def getOneEdge: Edge = edge
 }
